@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1567357823 source:/home/deivid/Documents/faculdade/linguagem-de-programacao-basica/structs/structs-exercicio/main.c
+	<stdio.h>
+	<stdlib.h>
+

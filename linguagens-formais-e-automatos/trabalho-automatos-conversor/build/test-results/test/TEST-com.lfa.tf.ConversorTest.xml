@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lfa.tf.ConversorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-06-15T03:35:38" hostname="deivid-ilegra" time="0.0">
+  <properties/>
+  <testcase name="convertAfnToAfd" classname="com.lfa.tf.ConversorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

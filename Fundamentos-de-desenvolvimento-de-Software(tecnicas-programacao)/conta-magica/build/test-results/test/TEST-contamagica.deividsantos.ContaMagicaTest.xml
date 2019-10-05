@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="contamagica.deividsantos.ContaMagicaTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2019-08-13T23:52:46" hostname="deivid-ilegra" time="0.045">
+  <properties/>
+  <testcase name="retiradaTest()" classname="contamagica.deividsantos.ContaMagicaTest" time="0.032"/>
+  <testcase name="retirada()" classname="contamagica.deividsantos.ContaMagicaTest" time="0.0"/>
+  <testcase name="getStatus()" classname="contamagica.deividsantos.ContaMagicaTest" time="0.001"/>
+  <testcase name="deposito()" classname="contamagica.deividsantos.ContaMagicaTest" time="0.001"/>
+  <testcase name="getNomeClienteTest()" classname="contamagica.deividsantos.ContaMagicaTest" time="0.0"/>
+  <testcase name="getSaldo()" classname="contamagica.deividsantos.ContaMagicaTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
