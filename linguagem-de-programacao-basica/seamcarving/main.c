@@ -182,10 +182,65 @@ void keyboard(unsigned char key, int x, int y)
             printf("%d\n", k);
             printf("j = %d\n\n", j);*/
         }
+        int weights[height+1][width];
+/*
 
-        for(int i=0; i< height; i++){
-            for(int j=0; j < width; j++){
-                matrix[i][j].b = 255;
+        for(int o=0; o< height; o++){
+            for(int p=0; p< width; p++){
+                weights[o][p] = 255;
+            }
+        }*/
+
+        for(int i=0; i< 10; i++){
+            printf("i = %d\n", i);
+            int proxLinha = i+1;
+            for(int j=1; j < 10; j++){
+                printf("j = %d\n", j);
+                int rOri = matrix[i][j].r;
+                int gOri = matrix[i][j].g;
+                int bOri = matrix[i][j].b;
+
+                int rMen1 = matrix[proxLinha][j-1].r;
+                int gMen1 = matrix[proxLinha][j-1].g;
+                int bMen1 = matrix[proxLinha][j-1].b;
+                int r1 = rOri - rMen1;
+                int g1 = gOri - gMen1;
+                int b1 = bOri - bMen1;
+                int deltaMen1 = r1*r1 + g1*g1+ b1*b1;
+
+                if (weights[proxLinha][j-1] < deltaMen1) {
+                    weights[proxLinha][j-1] = deltaMen1;
+                }
+/*
+                int rIgu = matrix[proxLinha][j].r;
+                int gIgu = matrix[proxLinha][j].g;
+                int bIgu = matrix[proxLinha][j].b;
+                int r2 = rOri - rIgu;
+                int g2 = gOri - gIgu;
+                int b2 = bOri - bIgu;
+                int deltaIg = r2*r2 + g2*g2+ b2*b2;
+
+                int rMais1 = matrix[proxLinha][j+1].r;
+                int gMais1 = matrix[proxLinha][j+1].g;
+                int bMais1 = matrix[proxLinha][j+1].b;
+                int r3 = rOri - rMais1;
+                int g3 = gOri - gMais1;
+                int b3 = bOri - bMais1;
+                int deltaMais1 = r3*r3 + g3*g3+ b3*b3;
+
+                if (weigths[proxLinha][j] < deltaIg){
+                    weigths[proxLinha][j] = deltaIg;
+                }
+
+                if (weigths[proxLinha][j+1] < deltaMais1){
+                    weigths[proxLinha][j+1] = deltaMais1;
+                }*/
+            }
+        }
+
+         for(int o=0; o< height+1; o++){
+            for(int p=0; p< width; p++){
+                printf(weights[o][p]);
             }
         }
 
