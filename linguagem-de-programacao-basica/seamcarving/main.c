@@ -172,24 +172,13 @@ void keyboard(unsigned char key, int x, int y)
         for(int i=0; i < pic0Size; i++){
             if((i % width) == 0){
                 j++;
-                //printf("i = %d\n", i);
-                //printf("j = %d\n\n", j);
                 k=0;
             }
             matrix[j][k] = pic[0].img[i];
             k++;
-            /*printf("i = %d, size = %d\n", i, pic0Size);
-            printf("%d\n", k);
-            printf("j = %d\n\n", j);*/
         }
-        int weights[height+1][width];
-/*
 
-        for(int o=0; o< height; o++){
-            for(int p=0; p< width; p++){
-                weights[o][p] = 255;
-            }
-        }*/
+        int *weights = (int *)malloc(height+1 * width * sizeof(int));
 
         for(int i=0; i< 10; i++){
             printf("i = %d\n", i);
@@ -208,10 +197,11 @@ void keyboard(unsigned char key, int x, int y)
                 int b1 = bOri - bMen1;
                 int deltaMen1 = r1*r1 + g1*g1+ b1*b1;
 
-                if (weights[proxLinha][j-1] < deltaMen1) {
-                    weights[proxLinha][j-1] = deltaMen1;
+                int pesoIndiceMenor = *(weights + proxLinha*width + (j-1));
+                if (pesoIndiceMenor < deltaMen1 || pesoIndiceMenor==0) {
+                    pesoIndiceMenor = deltaMen1;
                 }
-/*
+
                 int rIgu = matrix[proxLinha][j].r;
                 int gIgu = matrix[proxLinha][j].g;
                 int bIgu = matrix[proxLinha][j].b;
@@ -219,6 +209,11 @@ void keyboard(unsigned char key, int x, int y)
                 int g2 = gOri - gIgu;
                 int b2 = bOri - bIgu;
                 int deltaIg = r2*r2 + g2*g2+ b2*b2;
+
+                int pesoIndiceIgual = *(weights + proxLinha*width + j);
+                if (pesoIndiceIgual < deltaIg || pesoIndiceIgual==0){
+                    pesoIndiceIgual = deltaIg;
+                }
 
                 int rMais1 = matrix[proxLinha][j+1].r;
                 int gMais1 = matrix[proxLinha][j+1].g;
@@ -228,19 +223,17 @@ void keyboard(unsigned char key, int x, int y)
                 int b3 = bOri - bMais1;
                 int deltaMais1 = r3*r3 + g3*g3+ b3*b3;
 
-                if (weigths[proxLinha][j] < deltaIg){
-                    weigths[proxLinha][j] = deltaIg;
+                int pesoIndiceMaior = *(weights + proxLinha*width + (j+1));
+                if (pesoIndiceMaior < deltaMais1 || pesoIndiceMaior==0){
+                    pesoIndiceMaior = deltaMais1;
                 }
-
-                if (weigths[proxLinha][j+1] < deltaMais1){
-                    weigths[proxLinha][j+1] = deltaMais1;
-                }*/
             }
         }
 
-         for(int o=0; o< height+1; o++){
+        for(int o=0; o< height; o++){
             for(int p=0; p< width; p++){
-                printf(weights[o][p]);
+                int weightsOP = *(weights + o*width + p);
+                printf("%d\n", weightsOP);
             }
         }
 
@@ -250,12 +243,14 @@ void keyboard(unsigned char key, int x, int y)
         for(int m=0; m< height; m++){
             for(int n=0; n< width; n++){
                 pic[2].img[l] = matrix[m][n];
+
                 l++;
             }
         }
         // Chame uploadTexture a cada vez que mudar
         // a imagem (pic[2])
         uploadTexture();
+        free(weights);
     }
     glutPostRedisplay();
 }
