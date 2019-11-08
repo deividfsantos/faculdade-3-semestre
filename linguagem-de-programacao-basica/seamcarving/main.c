@@ -178,13 +178,17 @@ void keyboard(unsigned char key, int x, int y)
             k++;
         }
 
-        int *weights = (int *)malloc(height+1 * width * sizeof(int));
+        int *weights = (int *)malloc(height+1 * width * 2000);
 
-        for(int i=0; i< 10; i++){
-            printf("i = %d\n", i);
+        for(int o=0; o < height; o++){
+            for(int p=0; p< width; p++){
+                *(weights + o*width + p) = 0;
+            }
+        }
+
+        for(int i=0; i< height; i++){
             int proxLinha = i+1;
-            for(int j=1; j < 10; j++){
-                printf("j = %d\n", j);
+            for(int j=1; j < width; j++){
                 int rOri = matrix[i][j].r;
                 int gOri = matrix[i][j].g;
                 int bOri = matrix[i][j].b;
@@ -195,11 +199,11 @@ void keyboard(unsigned char key, int x, int y)
                 int r1 = rOri - rMen1;
                 int g1 = gOri - gMen1;
                 int b1 = bOri - bMen1;
-                int deltaMen1 = r1*r1 + g1*g1+ b1*b1;
+                int deltaMen1 = r1*r1 + g1*g1+ b1*b1 ;
 
                 int pesoIndiceMenor = *(weights + proxLinha*width + (j-1));
                 if (pesoIndiceMenor < deltaMen1 || pesoIndiceMenor==0) {
-                    pesoIndiceMenor = deltaMen1;
+                    *(weights + proxLinha*width + (j-1)) = *(weights + proxLinha*width + (i)) + deltaMen1;
                 }
 
                 int rIgu = matrix[proxLinha][j].r;
@@ -212,7 +216,7 @@ void keyboard(unsigned char key, int x, int y)
 
                 int pesoIndiceIgual = *(weights + proxLinha*width + j);
                 if (pesoIndiceIgual < deltaIg || pesoIndiceIgual==0){
-                    pesoIndiceIgual = deltaIg;
+                    *(weights + proxLinha*width + j) = *(weights + proxLinha*width + (i)) + deltaIg;
                 }
 
                 int rMais1 = matrix[proxLinha][j+1].r;
@@ -225,32 +229,30 @@ void keyboard(unsigned char key, int x, int y)
 
                 int pesoIndiceMaior = *(weights + proxLinha*width + (j+1));
                 if (pesoIndiceMaior < deltaMais1 || pesoIndiceMaior==0){
-                    pesoIndiceMaior = deltaMais1;
+                    *(weights + proxLinha*width + (j+1)) = *(weights + proxLinha*width + (i)) + deltaMais1;
                 }
             }
         }
 
-        for(int o=0; o< height; o++){
-            for(int p=0; p< width; p++){
-                int weightsOP = *(weights + o*width + p);
-                printf("%d\n", weightsOP);
+        for(int o=0; o< width; o++){
+            for(int p=1; p< width; p++){
+                printf("%d\n", *(weights + o*width + p));
             }
         }
 
+        free(weights);
         pic[2].height = height;
         pic[2].width = width;
         int l = 0;
         for(int m=0; m< height; m++){
             for(int n=0; n< width; n++){
                 pic[2].img[l] = matrix[m][n];
-
                 l++;
             }
         }
         // Chame uploadTexture a cada vez que mudar
         // a imagem (pic[2])
         uploadTexture();
-        free(weights);
     }
     glutPostRedisplay();
 }
