@@ -178,11 +178,11 @@ void keyboard(unsigned char key, int x, int y)
             k++;
         }
 
-        int *weights = (int *)malloc(height+1 * width * 2000);
+        int weights[height][width];
 
         for(int o=0; o < height; o++){
             for(int p=0; p< width; p++){
-                *(weights + o*width + p) = 0;
+                weights[o][p] = 0;
             }
         }
 
@@ -201,9 +201,9 @@ void keyboard(unsigned char key, int x, int y)
                 int b1 = bOri - bMen1;
                 int deltaMen1 = r1*r1 + g1*g1+ b1*b1 ;
 
-                int pesoIndiceMenor = *(weights + proxLinha*width + (j-1));
+                int pesoIndiceMenor = weights[proxLinha][j-1];
                 if (pesoIndiceMenor < deltaMen1 || pesoIndiceMenor==0) {
-                    *(weights + proxLinha*width + (j-1)) = *(weights + proxLinha*width + (i)) + deltaMen1;
+                    weights[proxLinha][j-1] = weights[i][j] + deltaMen1;
                 }
 
                 int rIgu = matrix[proxLinha][j].r;
@@ -214,9 +214,9 @@ void keyboard(unsigned char key, int x, int y)
                 int b2 = bOri - bIgu;
                 int deltaIg = r2*r2 + g2*g2+ b2*b2;
 
-                int pesoIndiceIgual = *(weights + proxLinha*width + j);
+                int pesoIndiceIgual = weights[proxLinha][j];
                 if (pesoIndiceIgual < deltaIg || pesoIndiceIgual==0){
-                    *(weights + proxLinha*width + j) = *(weights + proxLinha*width + (i)) + deltaIg;
+                    weights[proxLinha][j] = weights[i][j] + deltaIg;
                 }
 
                 int rMais1 = matrix[proxLinha][j+1].r;
@@ -227,20 +227,46 @@ void keyboard(unsigned char key, int x, int y)
                 int b3 = bOri - bMais1;
                 int deltaMais1 = r3*r3 + g3*g3+ b3*b3;
 
-                int pesoIndiceMaior = *(weights + proxLinha*width + (j+1));
+                int pesoIndiceMaior = weights[proxLinha][j+1];
                 if (pesoIndiceMaior < deltaMais1 || pesoIndiceMaior==0){
-                    *(weights + proxLinha*width + (j+1)) = *(weights + proxLinha*width + (i)) + deltaMais1;
+                    weights[proxLinha][j+1] = weights[i][j] + deltaMais1;
                 }
             }
         }
 
-        for(int o=0; o< width; o++){
-            for(int p=1; p< width; p++){
-                printf("%d\n", *(weights + o*width + p));
+        int menorIndice = 0;
+        for(int p=1; p < width-1; p++){
+            if(weights[height][p] < weights[height][menorIndice]){
+                menorIndice = p;
             }
         }
+        printf("%d\n", weights[height][menorIndice]);
 
-        free(weights);
+
+        int menores[height];
+        int menor = menorIndice;
+        menores[0] = menorIndice;
+        for(int o=height-1; o > 0; o++){
+            printf("%d\n", menores[o]);
+            int m1 = weights[height-1][menor-1];
+            int m2 = weights[height-1][menor];
+            int m3 = weights[height-1][menor+1];
+            if(m1 < m2 && m1 < m3){
+                menorIndice = menor-1;
+                menores[o] = menorIndice;
+            }else if(m2 < m1 && m2 < m3){
+                menorIndice = menor;
+                menores[o] = menorIndice;
+            }else{
+                menorIndice = menor+1;
+                menores[o] = menorIndice;
+            }
+        }
+/*
+        for(int i = 0; i < height; i++){
+            printf("%d\n", menores[i]);
+        }
+*/
         pic[2].height = height;
         pic[2].width = width;
         int l = 0;
