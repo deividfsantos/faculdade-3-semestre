@@ -1,0 +1,26 @@
+
+U
+squid:S106Æ"9Replace this use of System.out or System.err by a logger.(Ä°õ¯üÿÿÿÿ
+psquid:S1450Í"XRemove the "barraMenu" field and declare it as a local variable in the relevant methods.(ú¸ò…
+jsquid:MaximumInheritanceDepth"<This class has 6 parents which is greater than 5 authorized.(í£üˆÿÿÿÿÿ
+Dsquid:S1604S"(Make this anonymous inner class a lambda(§íÉüÿÿÿÿ
+ssquid:S1450Ñ"[Remove the "itemMulheres" field and declare it as a local variable in the relevant methods.(²˜–Ï
+zsquid:S1450×"]Remove the "painelListagem" field and declare it as a local variable in the relevant methods.(áüÍÙüÿÿÿÿ
+P
+squid:S106Å"9Replace this use of System.out or System.err by a logger.(®Ý•á
+wsquid:S1450Ô"ZRemove the "lblTelefone" field and declare it as a local variable in the relevant methods.(äŽ›éûÿÿÿÿ
+Jsquid:S1948Ý"-Make "controlador" transient or serializable.(úþ—ùÿÿÿÿ
+Asquid:S1172³"*Remove this unused method parameter "evt".(Ì¶šY
+Esquid:S1604À"(Make this anonymous inner class a lambda(¨í¡§úÿÿÿÿ
+ysquid:S1450Ö"\Remove the "menuListagens" field and declare it as a local variable in the relevant methods.(êÈ©þÿÿÿÿ
+rsquid:S1450Î"ZRemove the "btAdicionar" field and declare it as a local variable in the relevant methods.(èŒô‰
+?squid:S1604E"(Make this anonymous inner class a lambda(çÐî
+?squid:S1604["(Make this anonymous inner class a lambda(áì´
+Gsquid:S1172ª"*Remove this unused method parameter "evt".(Ö·‹Šþÿÿÿÿ
+vsquid:S1450Õ"YRemove the "lstPessoas" field and declare it as a local variable in the relevant methods.(ñ–œÊùÿÿÿÿ
+psquid:S1450Ï"XRemove the "grupoSexo" field and declare it as a local variable in the relevant methods.(ÉéÛÙ
+Gsquid:S1172™"*Remove this unused method parameter "evt".(ÀÛ¢áûÿÿÿÿ
+Usquid:S1197¿"8Move the array designator from the variable to the type.(¡þÏÖøÿÿÿÿ
+vsquid:S1450Ð"YRemove the "itemHomens" field and declare it as a local variable in the relevant methods.(ÌÙ¹Ãþÿÿÿÿ
+nsquid:S1450Ò"VRemove the "lblNome" field and declare it as a local variable in the relevant methods.(úž‹ë
+ssquid:S1450Ó"VRemove the "lblSexo" field and declare it as a local variable in the relevant methods.(ÕùÞÅþÿÿÿÿ

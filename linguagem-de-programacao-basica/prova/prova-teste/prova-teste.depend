@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1574363106 source:/home/ilegra/faculdade/faculdade-3-semestre/linguagem-de-programacao-basica/prova/prova-teste/main.c
+	<stdio.h>
+	<stdlib.h>
+

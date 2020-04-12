@@ -1,0 +1,21 @@
+
+dsquid:S2095—"GUse try-with-resources or close this "ResultSet" in a "finally" clause.(ÃÄ›¹øÿÿÿÿ
+usquid:S2293q"YReplace the type specification in this constructor call with the diamond operator ("<>").(ÓñÂ¾ùÿÿÿÿ
+fsquid:S2095G"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(«ğŠæ
+Esquid:S2115.")Add password protection to this database.(ĞÌ—ëøÿÿÿÿ
+hsquid:S1192g"QDefine a constant instead of duplicating this literal "Falha ao buscar." 4 times.(‡ü
+dsquid:S2095ƒ"GUse try-with-resources or close this "Statement" in a "finally" clause.(íñéşÿÿÿÿ
+]squid:S2095p"GUse try-with-resources or close this "ResultSet" in a "finally" clause.(å±°
+csquid:S2095/"GUse try-with-resources or close this "Statement" in a "finally" clause.(Àâ×ºıÿÿÿÿ
+dsquid:S2095„"GUse try-with-resources or close this "ResultSet" in a "finally" clause.(ÿ»Ğ¹úÿÿÿÿ
+csquid:S2095]"GUse try-with-resources or close this "ResultSet" in a "finally" clause.(ŒãÍšúÿÿÿÿ
+@squid:S2115@")Add password protection to this database.(¿Œ›
+vsquid:S2293˜"YReplace the type specification in this constructor call with the diamond operator ("<>").(ÓñÂ¾ùÿÿÿÿ
+dsquid:S2095–"GUse try-with-resources or close this "Statement" in a "finally" clause.(íñéşÿÿÿÿ
+gsquid:CommentedOutCodeLine#"<This block of commented-out lines of code should be removed.(¡»¢üùÿÿÿÿ
+dsquid:S2095."HUse try-with-resources or close this "Connection" in a "finally" clause.(ĞÌ—ëøÿÿÿÿ
+vsquid:S2293…"YReplace the type specification in this constructor call with the diamond operator ("<>").(ÓñÂ¾ùÿÿÿÿ
+esquid:S1192a"IDefine a constant instead of duplicating this literal "TELEFONE" 4 times.(õ”÷Êúÿÿÿÿ
+Wsquid:UnusedPrivateMethod,"-Remove this unused private "createDB" method.(ßìŠËıÿÿÿÿ
+fsquid:S2095Y"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(«ğŠæ
+csquid:S2095o"GUse try-with-resources or close this "Statement" in a "finally" clause.(íñéşÿÿÿÿ

@@ -62,7 +62,6 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         grupoSexo.add(rdFeminino);
         rdFeminino.setSelected(true);
         rdFeminino.setText("F");
-
         grupoSexo.add(rdMasculino);
         rdMasculino.setText("M");
 
@@ -191,7 +190,6 @@ public class JanelaPrincipal extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
                 try {
                     new JanelaPrincipal().setVisible(true);
