@@ -1,0 +1,26 @@
+ Address    Code        Basic                     Source
+
+0x00400000  0x3c011001  lui $1,0x00001001     4     main:  la	$t0,A		# Carrega endereco de A em $t0 - PSEUDO-INSTRUCAO
+0x00400004  0x34280000  ori $8,$1,0x00000000       
+0x00400008  0x8d090000  lw $9,0x00000000($8)  5     	lw	$t1,0($t0)	# Le valor de A para $t1
+0x0040000c  0x3c011001  lui $1,0x00001001     6     	la	$t2,B		# Carrega endereco de B em $t2 - PSEUDO-INSTRUCAO
+0x00400010  0x342a0004  ori $10,$1,0x00000004      
+0x00400014  0x8d4b0000  lw $11,0x00000000($10)7     	lw	$t3,0($t2)	# Le valor de B para $t3
+0x00400018  0x3c011001  lui $1,0x00001001     8     	la	$t4,D		# Carrega endereco de D em $t4 - PSEUDO-INSTRUCAO
+0x0040001c  0x342c0008  ori $12,$1,0x00000008      
+0x00400020  0x8d8d0000  lw $13,0x00000000($12)9     	lw	$t5,0($t4)	# Le valor de D para $t5
+0x00400024  0x3c011001  lui $1,0x00001001     10    	la	$t6,F		# Carrega endereco de F em $t6 - PSEUDO-INSTRUCAO
+0x00400028  0x342e000c  ori $14,$1,0x0000000c      
+0x0040002c  0x8dcf0000  lw $15,0x00000000($14)11    	lw	$t7,0($t6)	# Le valor de F para $t6
+0x00400030  0x012b4021  addu $8,$9,$11        13    	addu	$t0,$t1,$t3	# $t0 recebe A+B
+0x00400034  0x010d4821  addu $9,$8,$13        14    	addu	$t1,$t0,$t5	# $t1 recebe A+B+D
+0x00400038  0x3c01ffff  lui $1,0xffffffff     15    	addu	$t2,$t1,-5	# $t2 recebe A+B+D-5
+0x0040003c  0x3421fffb  ori $1,$1,0x0000fffb       
+0x00400040  0x01215021  addu $10,$9,$1             
+0x00400044  0x014f5821  addu $11,$10,$15      16    	addu	$t3,$t2,$t7	# $t3 recebe A+B+D-5+F
+0x00400048  0x014bc026  xor $24,$10,$11       17    	xor 	$t8, $t2, $t3
+0x0040004c  0x3c011001  lui $1,0x00001001     18    	la	$t5,E		# Carrega endereco de E em $t5 - PSEUDO-INSTRUCAO
+0x00400050  0x342d0010  ori $13,$1,0x00000010      
+0x00400054  0xadab0000  sw $11,0x00000000($13)19    	sw	$t3,0($t5)	# E recebe A+B+D-5+F
+0x00400058  0x2402000a  addiu $2,$0,0x0000000a23    	li	$v0, 10
+0x0040005c  0x0000000c  syscall               24    	syscall
