@@ -7,77 +7,81 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Encoder {
-    private static final int INSTRUCTION_INDEX = 0;
 
-    public String encodeLine(String line, Integer lineNumber, List<String> allLines) {
+    public String encodeLineLowerCase(String line, Integer lineNumber, List<String> allLines) {
         if (line == null || line.isBlank()) {
             return "";
         }
+        return encodeLine(line, lineNumber, allLines).toLowerCase();
+    }
 
+    private String encodeLine(String line, Integer lineNumber, List<String> allLines) {
         String lineWithoutSpaces = removeUnnecessaryWhiteSpaces(line);
         String[] instructionParts = lineWithoutSpaces.split(" ");
-        if (instructionParts[INSTRUCTION_INDEX].equals("addu")) {
-            return encodeRType(instructionParts, 33);
+        String instruction = instructionParts[0];
+        String[] registersAndValues = removeUnnecessaryWhiteSpaces(instructionParts[1]).split(",");
+        if (instruction.equals("addu")) {
+            return encodeRType(registersAndValues, 33);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("and")) {
-            return encodeRType(instructionParts, 36);
+        if (instruction.equals("and")) {
+            return encodeRType(registersAndValues, 36);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("xor")) {
-            return encodeRType(instructionParts, 38);
+        if (instruction.equals("xor")) {
+            return encodeRType(registersAndValues, 38);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("slt")) {
-            return encodeRType(instructionParts, 42);
+        if (instruction.equals("slt")) {
+            return encodeRType(registersAndValues, 42);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("sll")) {
-            return encodeRType2(instructionParts, 0);
+        if (instruction.equals("sll")) {
+            return encodeRType2(registersAndValues, 0);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("srl")) {
-            return encodeRType2(instructionParts, 2);
+        if (instruction.equals("srl")) {
+            return encodeRType2(registersAndValues, 2);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("addiu")) {
-            return encodeIType1(instructionParts, 9);
+        if (instruction.equals("addiu")) {
+            return encodeIType1(registersAndValues, 9);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("andi")) {
-            return encodeIType1(instructionParts, 12);
+        if (instruction.equals("andi")) {
+            return encodeIType1(registersAndValues, 12);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("ori")) {
-            return encodeIType1(instructionParts, 13);
+        if (instruction.equals("ori")) {
+            return encodeIType1(registersAndValues, 13);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("beq")) {
-            return encodeBranchType(instructionParts, 4, lineNumber, allLines);
+        if (instruction.equals("beq")) {
+            return encodeBranchType(registersAndValues, 4, lineNumber, allLines);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("bne")) {
-            return encodeBranchType(instructionParts, 5, lineNumber, allLines);
+        if (instruction.equals("bne")) {
+            return encodeBranchType(registersAndValues, 5, lineNumber, allLines);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("lui")) {
-            return encodeIType2(instructionParts, 15);
+        if (instruction.equals("lui")) {
+            return encodeIType2(registersAndValues, 15);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("lw")) {
-            return encodeStoreType(instructionParts, 35);
+        if (instruction.equals("lw")) {
+            return encodeStoreType(registersAndValues, 35);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("sw")) {
-            return encodeStoreType(instructionParts, 43);
+        if (instruction.equals("sw")) {
+            return encodeStoreType(registersAndValues, 43);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("j")) {
-            return encodeJType(instructionParts, allLines);
+        if (instruction.equals("j")) {
+            return encodeJType(registersAndValues, allLines);
         }
 
-        if (instructionParts[INSTRUCTION_INDEX].equals("jr")) {
-            return encodeJType2(instructionParts);
+        if (instruction.equals("jr")) {
+            return encodeJType2(registersAndValues);
         }
 
         return null;
@@ -91,10 +95,10 @@ public class Encoder {
     }
 
     private String encodeBranchType(String[] instructionParts, int opCode, Integer instructionLine, List<String> allLines) {
-        validateInstructionSize(instructionParts, 4);
-        String destinyRegister = instructionParts[1];
-        String sourceRegister = instructionParts[2];
-        String label = instructionParts[3];
+        validateInstructionSize(instructionParts, 3);
+        String destinyRegister = instructionParts[0];
+        String sourceRegister = instructionParts[1];
+        String label = instructionParts[2];
         if (isAnyBlank(destinyRegister, sourceRegister, label)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
@@ -109,9 +113,9 @@ public class Encoder {
     }
 
     private String encodeStoreType(String[] instructionParts, int opCode) {
-        validateInstructionSize(instructionParts, 3);
-        String source1Register = instructionParts[1];
-        String source2 = instructionParts[2];
+        validateInstructionSize(instructionParts, 2);
+        String source1Register = instructionParts[0];
+        String source2 = instructionParts[1];
         if (isAnyBlank(source1Register, source2)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
@@ -121,15 +125,15 @@ public class Encoder {
 
         Integer source1RegisterNumber = Registers.valueOf(source1Register.trim().replace(",", "")).getRegisterNumber();
         Integer source2RegisterNumber = Registers.valueOf(source2Register.trim().replace(",", "")).getRegisterNumber();
-        Integer offset = Integer.valueOf(offsetPlusRegister[0]);
+        Integer offset = getValueFromHexString(offsetPlusRegister[0]);
 
-        String binaryResult = typeIToBinaryConverter(opCode, source2RegisterNumber, source1RegisterNumber, offset);
+        String binaryResult = typeIToBinaryConverter(opCode, source1RegisterNumber, source2RegisterNumber, offset);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);
     }
 
     private String encodeJType(String[] instructionParts, List<String> allLines) {
-        validateInstructionSize(instructionParts, 2);
-        String label = instructionParts[1];
+        validateInstructionSize(instructionParts, 1);
+        String label = instructionParts[0];
         if (isAnyBlank(label)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
@@ -149,8 +153,8 @@ public class Encoder {
     }
 
     private String encodeJType2(String[] instructionParts) {
-        validateInstructionSize(instructionParts, 2);
-        String destinyRegister = instructionParts[1];
+        validateInstructionSize(instructionParts, 1);
+        String destinyRegister = instructionParts[0];
         if (isAnyBlank(destinyRegister)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
@@ -162,40 +166,44 @@ public class Encoder {
     }
 
     private String encodeIType1(String[] instructionParts, Integer opCode) {
-        validateInstructionSize(instructionParts, 4);
-        String destinyRegister = instructionParts[1];
-        String sourceRegister = instructionParts[2];
-        String immediate = instructionParts[3];
+        validateInstructionSize(instructionParts, 3);
+        String destinyRegister = instructionParts[0];
+        String sourceRegister = instructionParts[1];
+        String immediate = instructionParts[2];
         if (isAnyBlank(destinyRegister, sourceRegister, immediate)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
         Integer destinyRegisterNumber = Registers.valueOf(destinyRegister.trim().replace(",", "")).getRegisterNumber();
         Integer sourceRegisterNumber = Registers.valueOf(sourceRegister.trim().replace(",", "")).getRegisterNumber();
-        Integer immediateNumber = Integer.valueOf(immediate.trim().replace(",", ""));
+        Integer immediateNumber = getValueFromHexString(immediate.trim().replace(",", ""));
 
         String binaryResult = typeIToBinaryConverter(opCode, destinyRegisterNumber, sourceRegisterNumber, immediateNumber);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);
     }
 
     private String encodeIType2(String[] instructionParts, Integer opCode) {
-        validateInstructionSize(instructionParts, 3);
-        String destinyRegister = instructionParts[1];
-        String immediate = instructionParts[2];
+        validateInstructionSize(instructionParts, 2);
+        String destinyRegister = instructionParts[0];
+        String immediate = instructionParts[1];
         if (isAnyBlank(destinyRegister, immediate)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
         Integer destinyRegisterNumber = Registers.valueOf(destinyRegister.trim().replace(",", "")).getRegisterNumber();
-        Integer immediateNumber = Integer.valueOf(immediate.trim().replace(",", ""));
+        Integer immediateNumber = getValueFromHexString(immediate.trim().replace(",", ""));
 
         String binaryResult = typeIToBinaryConverter(opCode, destinyRegisterNumber, 0, immediateNumber);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);
     }
 
+    private Integer getValueFromHexString(String hexValue) {
+        return Integer.parseInt(hexValue.replace("0x", ""), 16);
+    }
+
     private String encodeRType(String[] instructionParts, Integer funct) {
-        validateInstructionSize(instructionParts, 4);
-        String destinyRegister = instructionParts[1];
-        String source1Register = instructionParts[2];
-        String source2Register = instructionParts[3];
+        validateInstructionSize(instructionParts, 3);
+        String destinyRegister = instructionParts[0];
+        String source1Register = instructionParts[1];
+        String source2Register = instructionParts[2];
         if (isAnyBlank(destinyRegister, source1Register, source2Register)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
@@ -208,16 +216,16 @@ public class Encoder {
     }
 
     private String encodeRType2(String[] instructionParts, int funct) {
-        validateInstructionSize(instructionParts, 4);
-        String destinyRegister = instructionParts[1];
-        String sourceRegister = instructionParts[2];
-        String shamtRegister = instructionParts[3];
+        validateInstructionSize(instructionParts, 3);
+        String destinyRegister = instructionParts[0];
+        String sourceRegister = instructionParts[1];
+        String shamtRegister = instructionParts[2];
         if (isAnyBlank(destinyRegister, sourceRegister, shamtRegister)) {
             throw new RuntimeException("Incorrect instruction format.");
         }
         Integer destinyRegisterNumber = Registers.valueOf(destinyRegister.trim().replace(",", "")).getRegisterNumber();
         Integer sourceRegisterNumber = Registers.valueOf(sourceRegister.trim().replace(",", "")).getRegisterNumber();
-        Integer shamtNumber = Integer.valueOf(shamtRegister.trim().replace(",", ""));
+        Integer shamtNumber = getValueFromHexString(shamtRegister.trim().replace(",", ""));
 
         String binaryResult = typeRToBinaryConverter(0, destinyRegisterNumber, 0, sourceRegisterNumber, shamtNumber, funct);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);
@@ -238,7 +246,7 @@ public class Encoder {
 
     private void validateInstructionSize(String[] instructionParts, Integer size) {
         if (instructionParts.length != size) {
-            throw new RuntimeException("Incorrect type R instruction format.");
+            throw new RuntimeException("Incorrect instruction format.");
         }
     }
 
@@ -310,7 +318,9 @@ public class Encoder {
     }
 
     public static void main(String[] args) {
+//        final int s = Integer.parseInt("00001001", 16);
         final String s = new Encoder().encodeLine("lui $1,0x00001001", 2, new ArrayList<>());
-        System.out.println(s);
+        final String s2 = new Encoder().encodeLine("ori $8,$1,0x00000000", 2, new ArrayList<>());
+        System.out.println(s2.toLowerCase());
     }
 }

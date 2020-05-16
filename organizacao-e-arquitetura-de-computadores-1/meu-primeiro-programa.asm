@@ -2,7 +2,7 @@
          .globl  main            
          
  main:  la	$t0,A		# Carrega endereco de A em $t0 - PSEUDO-INSTRUCAO
- 	jr 	$t1
+# 	j 	test
  	lw	$t1,0($t0)	# Le valor de A para $t1
  	la	$t2,B		# Carrega endereco de B em $t2 - PSEUDO-INSTRUCAO
  	lw	$t3,0($t2)	# Le valor de B para $t3
