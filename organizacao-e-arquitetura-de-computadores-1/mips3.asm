@@ -3,7 +3,7 @@
 main: 
     la $t0, A
     lw $t1, ($t0)
-    la $t0, B
+fim:    la $t0, B
     lw $t2, ($t0)
     and $t1, $t2, $t1
     andi $t1, 100
@@ -20,7 +20,6 @@ main:
 
 
 
-fim:
     li $v0, 10
     syscall
 erro:

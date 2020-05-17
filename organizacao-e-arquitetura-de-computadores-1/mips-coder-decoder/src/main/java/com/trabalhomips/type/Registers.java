@@ -42,4 +42,11 @@ public enum Registers {
     public Integer getRegisterNumber() {
         return registerNumber;
     }
+
+    public static String getRegisterByDecimal(Integer value) {
+        for (Registers register : Registers.values()) {
+            if (register.getRegisterNumber().equals(value)) return register.name();
+        }
+        throw new RuntimeException("Incorrect hex value.");
+    }
 }

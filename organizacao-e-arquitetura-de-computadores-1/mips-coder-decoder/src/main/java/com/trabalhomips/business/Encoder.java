@@ -119,12 +119,12 @@ public class Encoder {
             throw new RuntimeException("Incorrect instruction format.");
         }
 
-        String[] offsetPlusRegister = source2.split("\\(");
-        String source2Register = offsetPlusRegister[1].replace(")", "");
+        String[] offsetAndRegister = source2.split("\\(");
+        String source2Register = offsetAndRegister[1].replace(")", "");
 
         Integer source1RegisterNumber = Registers.valueOf(source1Register.trim().replace(",", "")).getRegisterNumber();
         Integer source2RegisterNumber = Registers.valueOf(source2Register.trim().replace(",", "")).getRegisterNumber();
-        Integer offset = getValueFromHexString(offsetPlusRegister[0]);
+        Integer offset = getValueFromHexString(offsetAndRegister[0]);
 
         String binaryResult = typeIToBinaryConverter(opCode, source1RegisterNumber, source2RegisterNumber, offset);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);

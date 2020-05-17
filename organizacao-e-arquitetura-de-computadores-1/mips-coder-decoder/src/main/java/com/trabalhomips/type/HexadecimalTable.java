@@ -18,9 +18,9 @@ public enum HexadecimalTable {
     E("E", "1110", 14),
     F("F", "1111", 15);
 
-    private String hexValue;
-    private String binary;
-    private Integer decimal;
+    private final String hexValue;
+    private final String binary;
+    private final Integer decimal;
 
     HexadecimalTable(String hexValue, String binary, Integer decimal) {
         this.hexValue = hexValue;
@@ -47,9 +47,9 @@ public enum HexadecimalTable {
         throw new RuntimeException("Incorrect hex value.");
     }
 
-    public static String getHexValueFromDecimal(Integer decimalValue) {
+    public static String getBinaryValueFromHex(String hex) {
         for (HexadecimalTable table : HexadecimalTable.values()) {
-            if (table.decimal.equals(decimalValue)) return table.getHexValue();
+            if (table.hexValue.equalsIgnoreCase(hex)) return table.binary;
         }
         throw new RuntimeException("Incorrect hex value.");
     }

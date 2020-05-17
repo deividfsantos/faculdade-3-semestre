@@ -1,17 +1,16 @@
-.text
-.globl main
-
 main:     la $t0, A
     lw $t1, ($t0)
-fim:    la $t0, B
+    la $t0, B
     lw $t2, ($t0)
-    beq $t1, $t2, fim
-    bne $t1, $t2, erro
+    slt $t1,$t2, $t5
 
 
+
+fim:
     li $v0, 10
     syscall
-erro: li $v0, 10
+erro:
+    li $v0, 10
     syscall
 
 
