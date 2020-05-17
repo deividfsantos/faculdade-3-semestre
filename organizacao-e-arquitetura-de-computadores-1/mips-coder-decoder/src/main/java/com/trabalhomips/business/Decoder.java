@@ -3,6 +3,7 @@ package com.trabalhomips.business;
 import com.trabalhomips.type.HexadecimalTable;
 import com.trabalhomips.type.Registers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Decoder {
@@ -24,7 +25,25 @@ public class Decoder {
     private static final String BEQ_OPCODE = "000100";
     private static final String BNE_OPCODE = "000101";
 
-    public String decodeLineLowerCase(String line, Integer lineNumber, List<String> allLines) {
+    public List<String> decodeFile(List<String> allLines) {
+        List<String> decodedLines = new ArrayList<>();
+        for (int i = 0; i < allLines.size(); i++) {
+            String decodedLine = decodeLineLowerCase(allLines.get(i), i, allLines);
+            decodedLines.add(decodedLine);
+        }
+        setLabels(allLines, decodedLines);
+        return decodedLines;
+    }
+
+    private void setLabels(List<String> allLines, List<String> decodedLines) {
+        for (int i = 0; i < decodedLines.size(); i++) {
+            if (allLines.get(i).startsWith("label")) {
+                decodedLines.set(i, "label_line_" + i + ": " + decodedLines.get(i));
+            }
+        }
+    }
+
+    protected String decodeLineLowerCase(String line, Integer lineNumber, List<String> allLines) {
         if (line == null || line.isBlank()) {
             return "";
         }
@@ -32,11 +51,11 @@ public class Decoder {
     }
 
     private String decodeLine(String line, List<String> allLines, Integer instructionNumber) {
-        String lineWithoutSpaces = line.trim();
+        String lineWithoutSpaces = removeWhiteSpaces(line);
         String hexCode = lineWithoutSpaces.replace("0x", "");
         String binaryLine = hexToBinaryConverter(hexCode);
         if (binaryLine.length() != 32) {
-            throw new RuntimeException("Incorrect hex instruction code.");
+            throw new RuntimeException("Incorrect hex instruction code. Line: " + instructionNumber);
         }
         String opCode = binaryLine.substring(0, 6);
         if (opCode.equalsIgnoreCase("000000")) {
@@ -92,6 +111,14 @@ public class Decoder {
         }
 
         return null;
+    }
+
+    private String removeWhiteSpaces(String line) {
+        String[] labelAndHexCode = line.split(" ");
+        if (labelAndHexCode.length == 2) {
+            return labelAndHexCode[1].trim();
+        }
+        return labelAndHexCode[0].trim();
     }
 
     private String decodeBranchType(List<String> allLines, Integer instructionNumber, String binaryLine, String operator) {
@@ -214,7 +241,11 @@ public class Decoder {
     private String hexToBinaryConverter(String hexCode) {
         StringBuilder binary = new StringBuilder();
         for (int i = 0; i < hexCode.length(); i++) {
-            binary.append(HexadecimalTable.getBinaryValueFromHex(String.valueOf(hexCode.charAt(i))));
+            final String hex = String.valueOf(hexCode.charAt(i));
+            if (hex.equalsIgnoreCase("l")) {
+                System.out.println("ehnois");
+            }
+            binary.append(HexadecimalTable.getBinaryValueFromHex(hex));
         }
         return binary.toString();
     }

@@ -20,3 +20,8 @@
 0x00400044  0x0000000c  syscall               25       syscall
 0x00400048  0x2402000a  addiu $2,$0,0x0000000a27       li $v0, 10
 0x0040004c  0x0000000c  syscall               28       syscall
+
+
+
+
+

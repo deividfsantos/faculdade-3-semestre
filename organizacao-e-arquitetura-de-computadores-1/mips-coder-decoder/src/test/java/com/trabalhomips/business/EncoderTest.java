@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -173,5 +174,43 @@ public class EncoderTest {
     public void encodeSltLine() {
         String slt = encoder.encodeLineLowerCase("slt $9,$10,$9", 1, new ArrayList<>());
         assertEquals("0x0149482a", slt);
+    }
+
+    @Test
+    public void encodeFileTest() {
+        String[] file = ("lui $1,0x00001001     \n" +
+                "ori $8,$1,0x00000000\n" +
+                "lw $9,0x00000000($8)  \n" +
+                "lui $1,0x00001001     \n" +
+                "ori $8,$1,0x00000004\n" +
+                "lw $10,0x00000000($8) \n" +
+                "and $9,$10,$9         \n" +
+                "andi $9,$9,0x00000064 \n" +
+                "slt $9,$10,$9         \n" +
+                "lw $9,0x00000000($8)  \n" +
+                "lw $10,0x00000000($8) \n" +
+                "beq $9,$10,fim\n" +
+                "bne $9,$10,erro \n" +
+                "fim lw $9,0x00000000($8)  \n" +
+                "erro lw $10,0x00000000($8) \n" +
+                "jr $9                 \n").split("\n");
+        List<String> encodedFile = encoder.encodeFile(Arrays.asList(file));
+        final String[] encodedLines = ("0x3c011001\n" +
+                "0x34280000\n" +
+                "0x8d090000\n" +
+                "0x3c011001\n" +
+                "0x34280004\n" +
+                "0x8d0a0000\n" +
+                "0x01494824\n" +
+                "0x31290064\n" +
+                "0x0149482a\n" +
+                "0x8d090000\n" +
+                "0x8d0a0000\n" +
+                "0x112a0002\n" +
+                "0x152a0002\n" +
+                "0x8d090000\n" +
+                "0x8d0a0000\n" +
+                "0x01200008").split("\n");
+        assertEquals(Arrays.asList(encodedLines), encodedFile);
     }
 }

@@ -186,4 +186,42 @@ class DecoderTest {
         assertEquals("bne $9,$10,label_line_10", bne2);
         assertEquals("label_line_10: erro:                 ", allLines.get(10));
     }
+
+    @Test
+    public void decodeFileTest() {
+        String[] file = ("0x3c011001\n" +
+                "0x34280000\n" +
+                "0x8d090000     \n" +
+                "0x3c011001\n" +
+                "0x34280004\n" +
+                "0x8d0a0000\n" +
+                "0x01494824\n" +
+                "0x31290064\n" +
+                "0x0149482a\n" +
+                "0x8d090000\n" +
+                "0x8d0a0000\n" +
+                "0x112a0002\n" +
+                "0x152a0002\n" +
+                "0x8d090000\n" +
+                "0x8d0a0000\n" +
+                "0x01200008\n").split("\n");
+        List<String> decodedFile = decoder.decodeFile(Arrays.asList(file));
+        final String[] decodedLines = ("lui $1,0x00001001\n" +
+                "ori $8,$1,0x00000000\n" +
+                "lw $9,0x00000000($8)\n" +
+                "lui $1,0x00001001\n" +
+                "ori $8,$1,0x00000004\n" +
+                "lw $10,0x00000000($8)\n" +
+                "and $9,$10,$9\n" +
+                "andi $9,$9,0x00000064\n" +
+                "slt $9,$10,$9\n" +
+                "lw $9,0x00000000($8)\n" +
+                "lw $10,0x00000000($8)\n" +
+                "beq $9,$10,label_line_14\n" +
+                "bne $9,$10,label_line_15\n" +
+                "lw $9,0x00000000($8)\n" +
+                "label_line_14: lw $10,0x00000000($8)\n" +
+                "label_line_15: jr $9").split("\n");
+        assertEquals(Arrays.asList(decodedLines), decodedFile);
+    }
 }
