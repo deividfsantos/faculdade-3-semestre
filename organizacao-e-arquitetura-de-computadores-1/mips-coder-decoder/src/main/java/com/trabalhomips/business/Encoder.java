@@ -3,7 +3,6 @@ package com.trabalhomips.business;
 import com.trabalhomips.type.HexadecimalTable;
 import com.trabalhomips.type.Registers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Encoder {
@@ -89,9 +88,9 @@ public class Encoder {
 
     private String removeUnnecessaryWhiteSpaces(String line) {
         while (line.contains("  ")) {
-            line = line.trim().replaceAll("  ", " ");
+            line = line.replaceAll("  ", " ");
         }
-        return line;
+        return line.trim();
     }
 
     private String encodeBranchType(String[] instructionParts, int opCode, Integer instructionLine, List<String> allLines) {
@@ -108,7 +107,7 @@ public class Encoder {
         Integer destinyRegisterNumber = Registers.valueOf(destinyRegister.trim().replace(",", "")).getRegisterNumber();
         Integer sourceRegisterNumber = Registers.valueOf(sourceRegister.trim().replace(",", "")).getRegisterNumber();
 
-        String binaryResult = typeIToBinaryConverter(opCode, destinyRegisterNumber, sourceRegisterNumber, displacement);
+        String binaryResult = typeIToBinaryConverter(opCode, sourceRegisterNumber, destinyRegisterNumber, displacement);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);
     }
 
@@ -138,18 +137,25 @@ public class Encoder {
             throw new RuntimeException("Incorrect instruction format.");
         }
         int jumpAddress = calculateJumpAddress(allLines, label);
-        String binaryResult = typeJToBinaryConverter(2, jumpAddress);
-        return "0x" + binary32ToHexadecimalConverter(binaryResult);
+
+        String opCodeBinary = decimalToBinaryConverter(2, 6);
+        String jumpAddressBinary32 = decimalToBinaryConverter(jumpAddress, 32);
+
+        String cleanJumpAddressBinary26 = removeUnnecessaryBits(jumpAddressBinary32);
+        return "0x" + binary32ToHexadecimalConverter(opCodeBinary + cleanJumpAddressBinary26);
+    }
+
+    private String removeUnnecessaryBits(String binaryResult) {
+        return binaryResult.substring(4, binaryResult.length() - 2);
     }
 
     private int calculateJumpAddress(List<String> allLines, String label) {
-        int address = 0x400000;
         for (int i = 0; i < allLines.size(); i++) {
-            if (allLines.get(i).contains(label)) {
-                address += Integer.parseInt(Integer.toHexString((i + 1) * 4), 16);
+            if (allLines.get(i).trim().startsWith(label)) {
+                return 0x400000 + Integer.parseInt(Integer.toHexString(i * 4), 16);
             }
         }
-        return address;
+        throw new RuntimeException("Label not found.");
     }
 
     private String encodeJType2(String[] instructionParts) {
@@ -161,7 +167,7 @@ public class Encoder {
 
         Integer destinyRegisterNumber = Registers.valueOf(destinyRegister.trim().replace(",", "")).getRegisterNumber();
 
-        String binaryResult = typeJ2ToBinaryConverter(destinyRegisterNumber);
+        String binaryResult = typeJToBinaryConverter(destinyRegisterNumber);
         return "0x" + binary32ToHexadecimalConverter(binaryResult);
     }
 
@@ -234,8 +240,8 @@ public class Encoder {
     private int calculateDisplacement(Integer instructionLine, List<String> allLines, String label) {
         int displacement = -1;
         for (int i = 0; i < allLines.size(); i++) {
-            if (allLines.get(i).contains(label)) {
-                displacement = (i + 1) - instructionLine;
+            if (allLines.get(i).trim().startsWith(label)) {
+                displacement = i - instructionLine;
             }
         }
         if (displacement == -1) {
@@ -250,12 +256,7 @@ public class Encoder {
         }
     }
 
-    private String typeJToBinaryConverter(Integer opCode, Integer target) {
-        return decimalToBinaryConverter(opCode, 6)
-                + decimalToBinaryConverter(target, 26);
-    }
-
-    private String typeJ2ToBinaryConverter(Integer destiny) {
+    private String typeJToBinaryConverter(Integer destiny) {
         return decimalToBinaryConverter(0, 6)
                 + decimalToBinaryConverter(destiny, 5)
                 + decimalToBinaryConverter(0, 16)
@@ -288,21 +289,17 @@ public class Encoder {
     }
 
     private String decimalToBinaryConverter(Integer value, Integer size) {
-        StringBuilder binaryInvertedResult = new StringBuilder();
-        Integer dividedValue = value;
-        while (dividedValue > 0) {
-            binaryInvertedResult.append(dividedValue % 2);
-            dividedValue = dividedValue / 2;
-        }
+        StringBuilder binaryResult = new StringBuilder(Integer.toBinaryString(value));
 
-        StringBuilder binaryResult = binaryInvertedResult.reverse();
         int length = binaryResult.length();
         for (int i = length; i < size; i++) {
-            binaryResult.insert(0, "0");
+            if (value >= 0) {
+                binaryResult.insert(0, "0");
+            }
         }
 
-        if (binaryResult.length() > size) {
-            throw new RuntimeException("Size overflow in value conversion.");
+        if (value < 0) {
+            binaryResult.delete(0, binaryResult.length() - size);
         }
 
         return binaryResult.toString();
@@ -315,12 +312,5 @@ public class Encoder {
             }
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-//        final int s = Integer.parseInt("00001001", 16);
-        final String s = new Encoder().encodeLine("lui $1,0x00001001", 2, new ArrayList<>());
-        final String s2 = new Encoder().encodeLine("ori $8,$1,0x00000000", 2, new ArrayList<>());
-        System.out.println(s2.toLowerCase());
     }
 }
