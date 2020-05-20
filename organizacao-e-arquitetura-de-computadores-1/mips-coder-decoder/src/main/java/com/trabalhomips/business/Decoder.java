@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Decoder {
-
+    // instrucoes em binario
     private static final String ADDU_FUNCT = "100001";
     private static final String XOR_FUNCT = "100110";
     private static final String SLT_FUNCT = "101010";
@@ -24,7 +24,8 @@ public class Decoder {
     private static final String J_OPCODE = "000010";
     private static final String BEQ_OPCODE = "000100";
     private static final String BNE_OPCODE = "000101";
-
+    //.
+    //Comeca o processo de decode deixando todas as instrucoes em minusculo
     public List<String> decodeFile(List<String> allLines) {
         List<String> decodedLines = new ArrayList<>();
         for (int i = 0; i < allLines.size(); i++) {
@@ -49,16 +50,17 @@ public class Decoder {
         }
         return decodeLine(line, allLines, lineNumber).toLowerCase();
     }
-
+    // processo que faz o decode do codigo
     private String decodeLine(String line, List<String> allLines, Integer instructionNumber) {
         String lineWithoutSpaces = removeWhiteSpaces(line);
         String hexCode = lineWithoutSpaces.replace("0x", "");
         String binaryLine = hexToBinaryConverter(hexCode);
-        if (binaryLine.length() != 32) {
+        if (binaryLine.length() != 32) { // se o codigo nao tiver 32 bits da um erro
             throw new RuntimeException("Incorrect hex instruction code. Line: " + instructionNumber);
         }
-        String opCode = binaryLine.substring(0, 6);
-        if (opCode.equalsIgnoreCase("000000")) {
+        String opCode = binaryLine.substring(0, 6);// pega o opcode
+        // todas as instrucoes possiveis
+        if (opCode.equalsIgnoreCase("000000")) {// caso a funcao for de tipo r
             String funct = binaryLine.substring(26, 32);
             if (funct.equalsIgnoreCase(JR_FUNCT))
                 return decodeJrType(binaryLine);
@@ -112,6 +114,7 @@ public class Decoder {
 
         return null;
     }
+    //.
 
     private String removeWhiteSpaces(String line) {
         String[] labelAndHexCode = line.split(" ");
@@ -121,18 +124,18 @@ public class Decoder {
         return labelAndHexCode[0].trim();
     }
 
-    private String decodeBranchType(List<String> allLines, Integer instructionNumber, String binaryLine, String operator) {
-        String register1Binary = binaryLine.substring(6, 11);
-        String register2Binary = binaryLine.substring(11, 16);
-        String immediateBinary = binaryLine.substring(16, 32);
-        String register1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));
-        String register2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));
-        int lineToJump = calculateLineToJump(immediateBinary, instructionNumber);
-        String labelToJumpName = createAndSetLabel(allLines, lineToJump);
-        return operator + register1 + "," + register2 + "," + labelToJumpName;
+    private String decodeBranchType(List<String> allLines, Integer instructionNumber, String binaryLine, String operator) {// caso for bne ou beq
+        String register1Binary = binaryLine.substring(6, 11); // pega o registrador 1
+        String register2Binary = binaryLine.substring(11, 16); // pega o registrador 2
+        String immediateBinary = binaryLine.substring(16, 32); // pega a quantidade de linhas deve ser pulado ate o label
+        String register1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));// pega o numero do registrador 1
+        String register2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));// pega o numero do registrador 2
+        int lineToJump = calculateLineToJump(immediateBinary, instructionNumber); // Pega a linha que tem q chegar
+        String labelToJumpName = createAndSetLabel(allLines, lineToJump);// pega o label pela linha do lineToJump
+        return operator + register1 + "," + register2 + "," + labelToJumpName;// retorna a instrucao decodificada
     }
 
-    private int calculateLineToJump(String immediateBinary, Integer instructionLine) {
+    private int calculateLineToJump(String immediateBinary, Integer instructionLine) { // retorna o numero da linha do label(beq ou bne)
         char positiveOrNegative = immediateBinary.charAt(0);
         StringBuilder immediateFull = new StringBuilder(immediateBinary);
         for (int i = immediateBinary.length(); i < 32; i++) {
@@ -142,7 +145,7 @@ public class Decoder {
         return distanceToInstruction + instructionLine + 1;
     }
 
-    private Integer calculateLineToJump(String target) {
+    private Integer calculateLineToJump(String target) { // retorna o numero da linha do label(j ou jr)
         if (target.length() == 26) {
             target = "0000" + target + "00";
         }
@@ -151,7 +154,7 @@ public class Decoder {
         return linesHex / 4;
     }
 
-    private String createAndSetLabel(List<String> allLines, Integer lineToJump) {
+    private String createAndSetLabel(List<String> allLines, Integer lineToJump) { // da um nome para um label
         String labelToJumpName = "label_line_" + lineToJump;
         String lineWithoutLabel = allLines.get(lineToJump);
         String newLabel = lineWithoutLabel.startsWith(labelToJumpName) ? lineWithoutLabel : labelToJumpName + ": " + lineWithoutLabel;
@@ -159,43 +162,44 @@ public class Decoder {
         return labelToJumpName;
     }
 
-    private String decodeJrType(String binaryLine) {
-        String registerBinary = binaryLine.substring(6, 11);
-        String register = Registers.getRegisterByDecimal(binaryToDecimalConverter(registerBinary));
+    private String decodeJrType(String binaryLine) { // caso a instrucao for um jr
+        String registerBinary = binaryLine.substring(6, 11);// pega o registrador
+        String register = Registers.getRegisterByDecimal(binaryToDecimalConverter(registerBinary)); // pega o numero do registrador
         return "jr " + register;
     }
 
-    private String decodeIType(String binaryLine, String operator) {
-        String register1Binary = binaryLine.substring(6, 11);
-        String register2Binary = binaryLine.substring(11, 16);
-        String immediateBinary = binaryLine.substring(16, 32);
-        String register1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));
-        String register2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));
-        String immediate = convertBinaryToHex(immediateBinary, 8);
+    private String decodeIType(String binaryLine, String operator) { // caso a insturcao for um andi, addiu, ori
+        String register1Binary = binaryLine.substring(6, 11);// pega o registrador 1
+        String register2Binary = binaryLine.substring(11, 16);// pega o registrador 2
+        String immediateBinary = binaryLine.substring(16, 32);// pega o valor inteiro
+        String register1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));// pega o numero do registrador 1
+        String register2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));// pega o numero do registrador 2
+        String immediate = convertBinaryToHex(immediateBinary, 8);// converte o valor inteiro de binario para hexa
         return operator + register2 + "," + register1 + "," + immediate;
     }
 
-    private String decodeStoreType(String binaryLine, String operator) {
-        String register1Binary = binaryLine.substring(6, 11);
-        String register2Binary = binaryLine.substring(11, 16);
-        String immediateBinary = binaryLine.substring(16, 32);
-        String register1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));
-        String register2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));
-        String immediate = convertBinaryToHex(immediateBinary, 8);
+    private String decodeStoreType(String binaryLine, String operator) { // caso a instrucao for um lw ou sw
+        String register1Binary = binaryLine.substring(6, 11);// pega o registrador 1
+        String register2Binary = binaryLine.substring(11, 16);// pega o registrador 2
+        String immediateBinary = binaryLine.substring(16, 32);// pega o valor offset
+        String register1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));// pega o numero do registrador 1
+        String register2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));// pega o numero do registrador 2
+        String immediate = convertBinaryToHex(immediateBinary, 8);// converte o valor inteiro de binario para hexa
         return operator + register2 + "," + immediate + "(" + register1 + ")";
     }
 
     private String decodeRType(String binaryInstruction) {
-        String register1Binary = binaryInstruction.substring(6, 11);
-        String register2Binary = binaryInstruction.substring(11, 16);
-        String register3Binary = binaryInstruction.substring(16, 21);
-        String offsetBinary = binaryInstruction.substring(21, 26);
-        String functBinary = binaryInstruction.substring(26, 32);
+        String register1Binary = binaryInstruction.substring(6, 11);// pega o registrador 1
+        String register2Binary = binaryInstruction.substring(11, 16);// pega o registrador 2
+        String register3Binary = binaryInstruction.substring(16, 21);// pega o registrador 3
+        String offsetBinary = binaryInstruction.substring(21, 26);// pega o offset
+        String functBinary = binaryInstruction.substring(26, 32);// pega a instrucao em binario
 
-        String registerSource1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));
-        String registerSource2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));
-        String registerDestiny = Registers.getRegisterByDecimal(binaryToDecimalConverter(register3Binary));
-        String offset = convertBinaryToHex(offsetBinary, 8);
+        String registerSource1 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register1Binary));// pega o numero do registrador 1
+        String registerSource2 = Registers.getRegisterByDecimal(binaryToDecimalConverter(register2Binary));// pega o numero do registrador 2
+        String registerDestiny = Registers.getRegisterByDecimal(binaryToDecimalConverter(register3Binary));// pega o numero do registrador 3
+        String offset = convertBinaryToHex(offsetBinary, 8); // converte o offset
+        //troca o valor binario do funct
         if (functBinary.equalsIgnoreCase(ADDU_FUNCT)) {
             return "addu " + registerDestiny + "," + registerSource1 + "," + registerSource2;
         }
@@ -220,8 +224,9 @@ public class Decoder {
             return "sll " + registerDestiny + "," + registerSource2 + "," + offset;
         }
         return null;
+        //.
     }
-
+    //conversoes
     private String convertBinaryToHex(String offsetBinary, Integer size) {
         int offset = binaryToDecimalConverter(offsetBinary);
         String hexOffset = Integer.toHexString(offset);
@@ -253,4 +258,5 @@ public class Decoder {
     private Integer binaryToDecimalConverter(String binary) {
         return Integer.parseInt(binary, 2);
     }
+    //.
 }
