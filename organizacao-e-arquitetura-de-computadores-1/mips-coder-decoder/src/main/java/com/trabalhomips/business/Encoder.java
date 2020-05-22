@@ -29,6 +29,9 @@ public class Encoder {
     }
 
     protected String encodeLineLowerCase(String line, Integer lineNumber, List<String> allLines) {
+        if (line.contains(".text") || line.contains(".globl main")) {
+            return null;
+        }
         String encodeLine = encodeLine(line, lineNumber, allLines);
         return encodeLine == null ? null : encodeLine.toLowerCase();
     }
@@ -36,6 +39,9 @@ public class Encoder {
     private String encodeLine(String line, Integer lineNumber, List<String> allLines) {
         String lineWithoutSpaces = removeUnnecessaryWhiteSpaces(line);// deixa a linha sem excessos de espacos
         String[] instructionParts = lineWithoutSpaces.split(" ");// separa as partes da linha
+        if (instructionParts.length == 1) {
+            return null;
+        }
         String instruction = instructionParts[0];// instrucao
         String[] registersAndValues = removeUnnecessaryWhiteSpaces(instructionParts[1]).split(",");// registradores e valores
         //casos com todas as instrucoes possiveis
@@ -99,7 +105,6 @@ public class Encoder {
             return encodeJType(registersAndValues, allLines, lineNumber);
         }
 
-
         if (instruction.equals("jr")) {
             return encodeJType2(registersAndValues, lineNumber);
         }
@@ -110,6 +115,9 @@ public class Encoder {
     private String removeUnnecessaryWhiteSpaces(String line) { // elimina espacos inuteis
         while (line.contains("  ")) {// se tiver mais de um espaco ele deleta um em loop
             line = line.replaceAll("  ", " ");
+        }
+        while (line.contains(", ")) {// se tiver mais de um espaco ele deleta um em loop
+            line = line.replaceAll(", ", ",");
         }
         return line.trim();
     }
@@ -261,7 +269,7 @@ public class Encoder {
         return "0x" + binary32ToHexadecimalConverter(binaryResult); // res em hexa
     }
 
-    private int calculateDisplacement(Integer instructionLine, List<String> allLines, String label,  Integer lineNumber) {// calcula o deslocamento
+    private int calculateDisplacement(Integer instructionLine, List<String> allLines, String label, Integer lineNumber) {// calcula o deslocamento
         int displacement = -1;
         for (int i = 0; i < allLines.size(); i++) { // loop para achar o label
             if (allLines.get(i).trim().startsWith(label)) {// se achar ele marca o deslocamento

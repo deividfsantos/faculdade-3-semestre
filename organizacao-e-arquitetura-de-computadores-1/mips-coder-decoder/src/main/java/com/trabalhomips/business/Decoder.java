@@ -24,6 +24,7 @@ public class Decoder {
     private static final String J_OPCODE = "000010";
     private static final String BEQ_OPCODE = "000100";
     private static final String BNE_OPCODE = "000101";
+
     //.
     //Comeca o processo de decode deixando todas as instrucoes em minusculo
     public List<String> decodeFile(List<String> allLines) {
@@ -50,6 +51,7 @@ public class Decoder {
         }
         return decodeLine(line, allLines, lineNumber).toLowerCase();
     }
+
     // processo que faz o decode do codigo
     private String decodeLine(String line, List<String> allLines, Integer instructionNumber) {
         String lineWithoutSpaces = removeWhiteSpaces(line);
@@ -226,6 +228,7 @@ public class Decoder {
         return null;
         //.
     }
+
     //conversoes
     private String convertBinaryToHex(String offsetBinary, Integer size) {
         int offset = binaryToDecimalConverter(offsetBinary);
@@ -247,9 +250,6 @@ public class Decoder {
         StringBuilder binary = new StringBuilder();
         for (int i = 0; i < hexCode.length(); i++) {
             final String hex = String.valueOf(hexCode.charAt(i));
-            if (hex.equalsIgnoreCase("l")) {
-                System.out.println("ehnois");
-            }
             binary.append(HexadecimalTable.getBinaryValueFromHex(hex));
         }
         return binary.toString();
