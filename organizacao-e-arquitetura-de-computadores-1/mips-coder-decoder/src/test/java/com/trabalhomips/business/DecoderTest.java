@@ -206,7 +206,10 @@ class DecoderTest {
                 "0x8d0a0000\n" +
                 "0x01200008\n").split("\n");
         List<String> decodedFile = decoder.decodeFile(Arrays.asList(file));
-        final String[] decodedLines = ("lui $1,0x00001001\n" +
+        final String[] decodedLines = (".text\n" +
+                ".globl main\n" +
+                "main:\n" +
+                "lui $1,0x00001001\n" +
                 "ori $8,$1,0x00000000\n" +
                 "lw $9,0x00000000($8)\n" +
                 "lui $1,0x00001001\n" +

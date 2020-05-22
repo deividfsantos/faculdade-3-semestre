@@ -34,6 +34,9 @@ public class Decoder {
             decodedLines.add(decodedLine);
         }
         setLabels(allLines, decodedLines);
+        decodedLines.add(0, "main:");
+        decodedLines.add(0, ".globl main");
+        decodedLines.add(0, ".text");
         return decodedLines;
     }
 
