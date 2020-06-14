@@ -4,9 +4,11 @@ import com.mipssimulator.simulator.BlocoControle;
 
 public class Main {
     public static void main(String[] args) {
-        String line = "addu $7, $9, $10";
+        String line = "and $7, $9, $10";
         BlocoControle blocoControle = new BlocoControle();
         int[] bancoDeRegistradores = new int[32];
+        bancoDeRegistradores[9] = 5;
+        bancoDeRegistradores[10] = 3;
         printRegistradores(bancoDeRegistradores);
         System.out.println(blocoControle);
         if (line.startsWith("addu")) {
@@ -23,6 +25,24 @@ public class Main {
             int registerSource2 = Integer.parseInt(registradores[2]);
 
             bancoDeRegistradores[registerDestino] = bancoDeRegistradores[registerSource1] + bancoDeRegistradores[registerSource2];
+
+            printRegistradores(bancoDeRegistradores);
+            System.out.println(blocoControle);
+        }
+        if (line.startsWith("and")) {
+            blocoControle.setUlaOp("10");
+            blocoControle.setUlaFonteB("00");
+            blocoControle.setUlaFonteA("1");
+            final String registradoresConcat = line
+                    .replace("and ", "")
+                    .replace(" ", "")
+                    .replace("$", "");
+            final String[] registradores = registradoresConcat.split(",");
+            int registerDestino = Integer.parseInt(registradores[0]);
+            int registerSource1 = Integer.parseInt(registradores[1]);
+            int registerSource2 = Integer.parseInt(registradores[2]);
+
+            bancoDeRegistradores[registerDestino] = bancoDeRegistradores[registerSource1] & bancoDeRegistradores[registerSource2];
 
             printRegistradores(bancoDeRegistradores);
             System.out.println(blocoControle);
