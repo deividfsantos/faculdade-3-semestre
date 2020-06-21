@@ -1,7 +1,5 @@
 package com.mipssimulator;
 
-import com.mipssimulator.simulator.BlocoControle;
-
 import java.util.Arrays;
 import java.util.List;
 
