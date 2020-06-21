@@ -2,20 +2,26 @@ package com.mipssimulator;
 
 import com.mipssimulator.simulator.BlocoControle;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
         String line = "sw $10, 4($8)";
+        List<String> lines = Arrays.asList("sw $10, 4($8)", "beq $10, $9, teste");
         int[] memoria = new int[10];
         memoria[1] = 123;
         BlocoControle blocoControle = new BlocoControle();
         int[] bancoDeRegistradores = new int[32];
+        int pc = 0x400000;
+
         bancoDeRegistradores[8] = 0x400000;
         bancoDeRegistradores[10] = 6;
         printRegistradores(bancoDeRegistradores);
         printMemoria(memoria);
         System.out.println(blocoControle);
 
-
+        pc += 0x4;
         if (line.startsWith("addu")) {
             blocoControle.setUlaOp("10");
             blocoControle.setUlaFonteB("00");
@@ -195,12 +201,50 @@ public class Main {
             final int enderecoMemoriaLocal = (bancoDeRegistradores[registradorDestino] - 0x400000) + offset / 4;
 
             memoria[enderecoMemoriaLocal] = bancoDeRegistradores[registradorOrigem];
+
+            System.out.println();
+            printRegistradores(bancoDeRegistradores);
+            printMemoria(memoria);
+            System.out.println(blocoControle);
+        }
+
+        if (line.startsWith("beq")) {
+            blocoControle.setEscMem("1");
+            blocoControle.setLouD("1");
+            final String registradoresConcat = line
+                    .replace("beq ", "")
+                    .replace(" ", "")
+                    .replace("$", "");
+            final String[] registradores = registradoresConcat.split(",");
+            int registerDestino = Integer.parseInt(registradores[0]);
+            int registerSource = Integer.parseInt(registradores[1]);
+            String label = registradores[2];
+
+            if (bancoDeRegistradores[registerDestino] == bancoDeRegistradores[registerSource]) {
+                final int displacement = calculateDisplacement(0, lines, label);
+                pc += displacement * 0x4;
+            }
+
             System.out.println();
             printRegistradores(bancoDeRegistradores);
             printMemoria(memoria);
             System.out.println(blocoControle);
         }
     }
+
+    private static int calculateDisplacement(Integer instructionLine, List<String> allLines, String label) {
+        int displacement = -1;
+        for (int i = 0; i < allLines.size(); i++) {
+            if (allLines.get(i).trim().startsWith(label)) {
+                displacement = i - instructionLine;
+            }
+        }
+        if (displacement == -1) {
+            throw new RuntimeException("Label not found. Line: " + instructionLine);
+        }
+        return displacement;
+    }
+
 
     private static void printMemoria(int[] memoria) {
         System.out.println("Memoria:");
