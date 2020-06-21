@@ -104,7 +104,7 @@ busca2:	addiu	$a1, $t0, 1	# prim = Meio + 1
 
 .data                  
 A:      .word   -5, -1, 5, 9, 12, 15, 21, 29, 31, 58, 250, 325
-prim:	.word	0
+prim:	.word	12
 ult: 	.word	11
 valor: 	.word	-5
 LC1: .asciiz "Posição do valor no array: "

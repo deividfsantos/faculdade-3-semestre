@@ -137,20 +137,19 @@ public class BlocoControle {
 
     @Override
     public String toString() {
-        return "BlocoControle{" +
-                "pcEscCond='" + pcEscCond + '\'' +
-                ", pcEsc='" + pcEsc + '\'' +
-                ", louD='" + louD + '\'' +
-                ", lerMem='" + lerMem + '\'' +
-                ", escMem='" + escMem + '\'' +
-                ", memParaReg='" + memParaReg + '\'' +
-                ", iREsc='" + iREsc + '\'' + "\n" +
-                ", fontePC='" + fontePC + '\'' +
-                ", ulaOp='" + ulaOp + '\'' +
-                ", ulaFonteB='" + ulaFonteB + '\'' +
-                ", ulaFonteA='" + ulaFonteA + '\'' +
-                ", escReg='" + escReg + '\'' +
-                ", regDat='" + regDat + '\'' +
-                '}';
+        return "\nBlocoControle: \n" +
+                "pcEscCond: " + pcEscCond + "\t\t\t\t" +
+                "pcEsc: " + pcEsc + "\t\t\t\t" +
+                "louD: " + louD + "\t\t\t\t" +
+                "lerMem: " + lerMem + "\t\t\t\t" +
+                "escMem: " + escMem + "\n" +
+                "memParaReg: " + memParaReg + "\t\t\t\t" +
+                "iREsc: " + iREsc + "\t\t\t\t" +
+                "fontePC: " + fontePC + "\t\t\t" +
+                "ulaOp: " + ulaOp + "\n" +
+                "ulaFonteB: " + ulaFonteB + "\t\t\t\t" +
+                "ulaFonteA: " + ulaFonteA + "\t\t\t" +
+                "escReg: " + escReg + "\t\t\t" +
+                "regDat: " + regDat + "\n";
     }
 }
