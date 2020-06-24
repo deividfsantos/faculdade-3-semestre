@@ -3,7 +3,6 @@ package com.mipssimulator;
 import com.mipssimulator.simulator.BlocoControle;
 import com.mipssimulator.simulator.Registradores;
 import com.mipssimulator.simulator.Ula;
-
 import java.util.List;
 
 public class Main {
