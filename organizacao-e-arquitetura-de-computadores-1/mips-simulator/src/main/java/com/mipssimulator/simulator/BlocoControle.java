@@ -13,7 +13,7 @@ public class BlocoControle {
     private String ulaFonteB;
     private String ulaFonteA;
     private String escReg;
-    private String regDat;
+    private String regDst;
 
     public BlocoControle() {
         this.pcEscCond = "0";
@@ -28,7 +28,7 @@ public class BlocoControle {
         this.ulaFonteB = "0";
         this.ulaFonteA = "0";
         this.escReg = "0";
-        this.regDat = "0";
+        this.regDst = "0";
     }
 
     public String getPcEscCond() {
@@ -127,12 +127,24 @@ public class BlocoControle {
         this.escReg = escReg;
     }
 
-    public String getRegDat() {
-        return regDat;
+    public String getRegDst() {
+        return regDst;
     }
 
-    public void setRegDat(String regDat) {
-        this.regDat = regDat;
+    public void setRegDst(String regDst) {
+        this.regDst = regDst;
+    }
+
+    public void defineOpcode(String addu) {
+        setUlaOp("00");
+        setUlaFonteB("00");
+        setUlaFonteA("1");
+        if (addu.equals("000000")) {
+            setUlaOp("10");
+            setRegDst("1");
+            setEscReg("1");
+            setMemParaReg("0");
+        }
     }
 
     @Override
@@ -150,6 +162,6 @@ public class BlocoControle {
                 "ulaFonteB: " + ulaFonteB + "\t\t\t\t" +
                 "ulaFonteA: " + ulaFonteA + "\t\t\t" +
                 "escReg: " + escReg + "\t\t\t" +
-                "regDat: " + regDat + "\n";
+                "regDat: " + regDst + "\n";
     }
 }
