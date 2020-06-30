@@ -9,6 +9,13 @@ public class Memoria {
         memoria[2] = 15;
     }
 
+    public Integer executa(Integer endereco, Integer dadosEscrito, BlocoControle blocoControle) {
+        escreve(endereco, dadosEscrito, blocoControle);
+        final Integer ler = ler(endereco, blocoControle);
+        printMemoria();
+        return ler;
+    }
+
     public Integer ler(Integer endereco, BlocoControle blocoControle) {
         if (blocoControle.getLerMem().equals("1")) {
             final int enderecoAdaptado = (endereco - 0x400000) / 4;
@@ -17,11 +24,13 @@ public class Memoria {
         return endereco;
     }
 
-    public void escreve(Integer valor, int endereco) {
-        memoria[endereco] = valor;
+    public void escreve(Integer valor, Integer endereco, BlocoControle blocoControle) {
+        if (blocoControle.getEscMem().equals("1")) {
+            memoria[endereco] = valor;
+        }
     }
 
-    private static void printMemoria(int[] memoria) {
+    private void printMemoria() {
         System.out.println("Memoria:");
         for (int i = 0; i < memoria.length; i++) {
             final int endereco = 0x400000 + i * 0x4;

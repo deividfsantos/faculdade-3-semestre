@@ -36,7 +36,7 @@ public class Main {
         registradores.escreve(valorUla, regEscrita, blocoControle);
 
         final Integer endereco = muxPC(blocoControle, valorUla);
-        final Integer registradorDadosMemoria = memoria.ler(endereco, blocoControle);
+        final Integer registradorDadosMemoria = memoria.executa(endereco, valorUla, blocoControle);
 
         final Integer dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, valorUla);
 
@@ -89,16 +89,5 @@ public class Main {
             return a;
         }
         return null;
-    }
-
-    private static void printRegistradores(int[] bancoDeRegistradores) {
-        System.out.println("Registradores:");
-        for (int i = 0; i < bancoDeRegistradores.length; i++) {
-            System.out.print("$" + i + ": " + bancoDeRegistradores[i] + "\t\t\t\t\t");
-            if (i % 4 == 3) {
-                System.out.println();
-            }
-        }
-        System.out.println();
     }
 }

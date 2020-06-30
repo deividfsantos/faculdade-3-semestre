@@ -164,6 +164,7 @@ public class BlocoControle {
                 setEscReg("1");
                 setRegDst("0");
                 setEscReg("1");
+                setEscMem("1");
             }
         }
     }
