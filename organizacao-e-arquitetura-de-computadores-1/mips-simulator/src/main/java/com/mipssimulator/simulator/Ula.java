@@ -20,7 +20,6 @@ public class Ula {
 
 //      lw $9, 4($8)
 
-
 //      xor             OK
 //      lui
 //      addu            OK

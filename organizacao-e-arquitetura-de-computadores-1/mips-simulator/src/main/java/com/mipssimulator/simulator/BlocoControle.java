@@ -138,8 +138,8 @@ public class BlocoControle {
     public void defineOpcode(String opCode) {
         setUlaFonteB("00");
         setUlaFonteA("1");
-        final String tipoROpCode = "000000";
-        if (opCode.equals(tipoROpCode)) {
+        final String tipoROpCode = "000000"; // opcode dos tipos R
+        if (opCode.equals(tipoROpCode)) {// se o opcode encotrado for o opcode de um tipo R
             setUlaOp("00");
             setUlaOp("10");
             setRegDst("0");
@@ -147,9 +147,9 @@ public class BlocoControle {
             setMemParaReg("0");
         }
 
-        final String swOpcode = "101011";
-        final String lwOpcode = "100011";
-        if (opCode.equals(swOpcode) || opCode.equals(lwOpcode)) {
+        final String swOpcode = "101011";// opcode sw
+        final String lwOpcode = "100011";// opcode lw
+        if (opCode.equals(swOpcode) || opCode.equals(lwOpcode)) {// se o opcode encotrado for o opcode de um sw/lw
             setUlaOp("00");
             setUlaFonteB("10");
             if (opCode.equals(lwOpcode)) {
@@ -187,3 +187,4 @@ public class BlocoControle {
                 "regDat: " + regDst + "\n";
     }
 }
+
