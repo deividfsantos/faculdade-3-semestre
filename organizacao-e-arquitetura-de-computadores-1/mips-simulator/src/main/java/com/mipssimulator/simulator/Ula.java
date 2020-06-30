@@ -21,11 +21,11 @@ public class Ula {
 //      lw $9, 4($8)
 
 
-//      xor              OK
+//      xor             OK
 //      lui
-//      addu             OK
+//      addu            OK
 //      addiu
-//      lw
+//      lw              OK
 //      sw
 //      beq
 //      bne

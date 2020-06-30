@@ -91,8 +91,6 @@ public class Main {
         return null;
     }
 
-
-
     private static void printRegistradores(int[] bancoDeRegistradores) {
         System.out.println("Registradores:");
         for (int i = 0; i < bancoDeRegistradores.length; i++) {

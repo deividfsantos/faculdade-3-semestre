@@ -166,7 +166,6 @@ public class BlocoControle {
                 setEscReg("1");
             }
         }
-
     }
 
     @Override
