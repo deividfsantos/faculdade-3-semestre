@@ -135,16 +135,38 @@ public class BlocoControle {
         this.regDst = regDst;
     }
 
-    public void defineOpcode(String addu) {
-        setUlaOp("00");
+    public void defineOpcode(String opCode) {
         setUlaFonteB("00");
         setUlaFonteA("1");
-        if (addu.equals("000000")) {
+        final String tipoROpCode = "000000";
+        if (opCode.equals(tipoROpCode)) {
+            setUlaOp("00");
             setUlaOp("10");
-            setRegDst("1");
+            setRegDst("0");
             setEscReg("1");
             setMemParaReg("0");
         }
+
+        final String swOpcode = "101011";
+        final String lwOpcode = "100011";
+        if (opCode.equals(swOpcode) || opCode.equals(lwOpcode)) {
+            setUlaOp("00");
+            setUlaFonteB("10");
+            if (opCode.equals(lwOpcode)) {
+                setLouD("1");
+                setMemParaReg("1");
+                setLerMem("1");
+                setRegDst("1");
+                setEscReg("1");
+            }
+            if (opCode.equals(swOpcode)) {
+                setLouD("1");
+                setEscReg("1");
+                setRegDst("0");
+                setEscReg("1");
+            }
+        }
+
     }
 
     @Override

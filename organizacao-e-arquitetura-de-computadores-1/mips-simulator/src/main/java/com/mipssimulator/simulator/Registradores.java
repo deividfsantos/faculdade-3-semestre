@@ -1,12 +1,14 @@
 package com.mipssimulator.simulator;
 
 public class Registradores {
-    private int[] registradores;
+    private final int[] registradores;
 
     public Registradores() {
         this.registradores = new int[32];
-        registradores[11] = 10;
-        registradores[9] = 8;
+        registradores[8] = 0x400004;
+        registradores[9] = 1;
+        registradores[11] = 5;
+        registradores[1] = 16;
     }
 
     public Integer busca(String registrador) {
@@ -14,8 +16,8 @@ public class Registradores {
         return registradores[regCode];
     }
 
-    public void escreve(int valor, String reg1, String escReg) {
-        if (escReg.equals("1")) {
+    public void escreve(Integer valor, String reg1, BlocoControle blocoControle) {
+        if (blocoControle.getEscReg().equals("1")) {
             final int regCode = Integer.parseInt(reg1, 2);
             registradores[regCode] = valor;
         }

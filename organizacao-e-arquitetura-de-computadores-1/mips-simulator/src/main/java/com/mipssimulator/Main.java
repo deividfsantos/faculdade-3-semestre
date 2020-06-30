@@ -1,18 +1,19 @@
 package com.mipssimulator;
 
 import com.mipssimulator.simulator.BlocoControle;
+import com.mipssimulator.simulator.Memoria;
 import com.mipssimulator.simulator.Registradores;
 import com.mipssimulator.simulator.Ula;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Integer line = 0x01698824;
+        Integer line = 0x8d090004;
         Ula ula = new Ula();
         Registradores registradores = new Registradores();
         BlocoControle blocoControle = new BlocoControle();
+        Memoria memoria = new Memoria();
 
-        String instructionBin =  Long.toBinaryString( Integer.toUnsignedLong(line) | 0x100000000L ).substring(1);
+        String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(line) | 0x100000000L).substring(1);
         String opCode = instructionBin.substring(0, 6);
         String reg1 = instructionBin.substring(6, 11);
         String reg2 = instructionBin.substring(11, 16);
@@ -21,43 +22,76 @@ public class Main {
 
         blocoControle.defineOpcode(opCode);
 
-        final Integer dadoRegA = registradores.busca(reg1);
-        final Integer dadoRegB = registradores.busca(reg2);
+        final Integer A = registradores.busca(reg1);
+        final Integer B = registradores.busca(reg2);
 
-        final int valor = ula.calcular(dadoRegA, dadoRegB, func.substring(10, 16));
+        String valorEstendido = extensaoSinal(func);
 
-        if (blocoControle.getRegDst().equals("0")) {
-            registradores.escreve(valor, reg2, blocoControle.getEscReg());
-        } else if (blocoControle.getRegDst().equals("1")) {
-            registradores.escreve(valor, reg3, blocoControle.getEscReg());
-        }
+        Integer muxA = muxA(blocoControle, A);
+        Integer muxB = muxB(blocoControle, B, valorEstendido);
+
+        final Integer valorUla = ula.calcular(muxA, muxB, func.substring(10, 16), blocoControle.getUlaOp());
+
+        final String regEscrita = muxRegistradorEscrito(blocoControle, reg2, reg3);
+        registradores.escreve(valorUla, regEscrita, blocoControle);
+
+        final Integer endereco = muxPC(blocoControle, valorUla);
+        final Integer registradorDadosMemoria = memoria.ler(endereco, blocoControle);
+
+        final Integer dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, valorUla);
+
+        final String regEscrita1 = muxRegistradorEscrito(blocoControle, reg2, reg3);
+        registradores.escreve(dadoEscrita, regEscrita1, blocoControle);
     }
 
-    private static int calculateDisplacement(Integer instructionLine, List<String> allLines, String label) {
-        int displacement = -1;
-        for (int i = 0; i < allLines.size(); i++) {
-            if (allLines.get(i).trim().startsWith(label)) {
-                displacement = i - instructionLine;
-            }
+    private static String extensaoSinal(String func) {
+        return "0000000000000000" + func;
+    }
+
+    private static String muxRegistradorEscrito(BlocoControle blocoControle, String reg0, String reg1) {
+        if (blocoControle.getRegDst().equals("1")) {
+            return reg0;
+        } else if (blocoControle.getRegDst().equals("0")) {
+            return reg1;
         }
-        if (displacement == -1) {
-            throw new RuntimeException("Label not found. Line: " + instructionLine);
+        return null;
+    }
+
+    private static Integer muxDadoEscrito(BlocoControle blocoControle, Integer valorRegistradorDadosMemoria, Integer valorUla) {
+        if (blocoControle.getMemParaReg().equals("1")) {
+            return valorRegistradorDadosMemoria;
+        } else if (blocoControle.getMemParaReg().equals("0")) {
+            return valorUla;
         }
-        return displacement;
+        return null;
+    }
+
+    private static Integer muxPC(BlocoControle blocoControle, Integer valorUla) {
+        if (blocoControle.getLouD().equals("1")) {
+            return valorUla;
+        }
+        return null;
+    }
+
+    private static Integer muxB(BlocoControle blocoControle, Integer b, String valorEstendido) {
+        if (blocoControle.getUlaFonteB().equals("00")) {
+            return b;
+        } else if (blocoControle.getUlaFonteB().equals("01")) {
+            return 4;
+        } else if (blocoControle.getUlaFonteB().equals("10")) {
+            return Integer.valueOf(valorEstendido, 2);
+        }
+        return null;
+    }
+
+    private static Integer muxA(BlocoControle blocoControle, Integer a) {
+        if (blocoControle.getUlaFonteA().equals("1")) {
+            return a;
+        }
+        return null;
     }
 
 
-    private static void printMemoria(int[] memoria) {
-        System.out.println("Memoria:");
-        for (int i = 0; i < memoria.length; i++) {
-            final int endereco = 0x400000 + i * 0x4;
-            System.out.print(Integer.toHexString(endereco) + ": " + memoria[i] + "\t\t\t\t\t");
-            if (i % 4 == 3) {
-                System.out.println();
-            }
-        }
-        System.out.println();
-    }
 
     private static void printRegistradores(int[] bancoDeRegistradores) {
         System.out.println("Registradores:");
