@@ -1,16 +1,31 @@
 package com.mipssimulator.simulator;
 
+import java.util.List;
+
 public class Memoria {
 
     private final int[] memoria;
-    // private int pc;
 
     public Memoria() {
         this.memoria = new int[50];
-        memoria[2] = 15;
-        memoria[0] = 0x35280064;
-        //this.pc = 0x00400000;
     }
+
+    public void carregarInstrucoes(List<String> allLines) {
+        int data = 0;
+        for (int i = 0; i < allLines.size(); i++) {
+            memoria[i] = Long.valueOf(Long.parseLong(allLines.get(i).replace("0x", "").toUpperCase(), 16)).intValue();
+            if (allLines.get(i).contains(".data")) {
+                data = i;
+                return;
+            }
+        }
+        for (int i = data + 1; i < allLines.size(); i++) {
+            final int inicioMemoria = 35;
+            final String[] pontoData = allLines.get(i).trim().split(" ");
+            memoria[i + inicioMemoria] = Integer.parseInt(pontoData[pontoData.length - 1]);
+        }
+    }
+
 
     public Integer executar(Integer endereco, Integer dadosEscrito, BlocoControle blocoControle) {
         escreve(endereco, dadosEscrito, blocoControle);

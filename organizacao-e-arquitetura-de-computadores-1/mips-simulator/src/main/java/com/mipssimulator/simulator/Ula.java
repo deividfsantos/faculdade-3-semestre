@@ -19,8 +19,12 @@ public class Ula {
         }
         if (func.equals("100")) {
             final String binaryString = Integer.toBinaryString(dado2);
-            final String binaryWithLoadedUpper = leftPad(binaryString.concat("0000000000000000"), 32, '0');
-            return Integer.valueOf(binaryWithLoadedUpper, 2);
+            final String loadedBin = binaryString.concat("0000000000000000");
+            if (loadedBin.startsWith("1000000000001")) {
+                loadedBin.replace("1000000000001", "10000000000000010001100");
+            }
+            final String binaryWithLoadedUpper = leftPad(loadedBin, 32, '0');
+            return Integer.parseInt(binaryWithLoadedUpper, 2);
         }
         throw new RuntimeException();
     }
@@ -39,7 +43,7 @@ public class Ula {
             return "010";
         }
         if (blocoControle.getUlaOp().equals("10")) {
-            if (func.equals("100000")) {
+            if (func.equals("100001")) {
                 return "010";
             }
             if (func.equals("100100")) {
@@ -51,7 +55,7 @@ public class Ula {
             if (func.equals("101010")) {
                 return "111";
             }
-            if (func.equals("000000")) {
+            if (func.equals("100110")) {
                 return "011";
             }
         }

@@ -5,13 +5,6 @@ public class Registradores {
 
     public Registradores() {
         this.registradores = new int[32];
-        registradores[8] = 0x400004;
-        registradores[11] = 5;
-        registradores[1] = 16;
-        registradores[16] = 7;
-        registradores[17] = 0x400010;
-        registradores[21] = 9;
-        registradores[9] = 20;
     }
 
     public Integer busca(String registrador) {// procura o registrador

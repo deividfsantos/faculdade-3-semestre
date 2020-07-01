@@ -3,7 +3,7 @@ package com.mipssimulator.simulator;
 public class BlocoControle {
     private String pcEscCond;
     private String pcEsc;
-    private String louD;
+    private String iouD;
     private String lerMem;
     private String escMem;
     private String memParaReg;
@@ -18,7 +18,7 @@ public class BlocoControle {
     public BlocoControle() {
         this.pcEscCond = "0";
         this.pcEsc = "0";
-        this.louD = "0";
+        this.iouD = "0";
         this.lerMem = "1";
         this.escMem = "0";
         this.memParaReg = "0";
@@ -47,12 +47,12 @@ public class BlocoControle {
         this.pcEsc = pcEsc;
     }
 
-    public String getLouD() {
-        return louD;
+    public String getIouD() {
+        return iouD;
     }
 
-    public void setLouD(String louD) {
-        this.louD = louD;
+    public void setIouD(String iouD) {
+        this.iouD = iouD;
     }
 
     public String getLerMem() {
@@ -165,14 +165,14 @@ public class BlocoControle {
             setUlaOp("00");
             setUlaFonteB("10");
             if (opCode.equals(lwOpcode)) {
-                setLouD("1");
+                setIouD("1");
                 setMemParaReg("1");
                 setLerMem("1");
                 setRegDst("1");
                 setEscReg("1");
             }
             if (opCode.equals(swOpcode)) {
-                setLouD("1");
+                setIouD("1");
                 setEscReg("1");
                 setRegDst("0");
                 setEscReg("1");
@@ -186,7 +186,7 @@ public class BlocoControle {
         return "\nBlocoControle: \n" +
                 "pcEscCond: " + pcEscCond + "\t\t\t\t" +
                 "pcEsc: " + pcEsc + "\t\t\t\t" +
-                "louD: " + louD + "\t\t\t\t" +
+                "louD: " + iouD + "\t\t\t\t" +
                 "lerMem: " + lerMem + "\t\t\t\t" +
                 "escMem: " + escMem + "\n" +
                 "memParaReg: " + memParaReg + "\t\t\t\t" +

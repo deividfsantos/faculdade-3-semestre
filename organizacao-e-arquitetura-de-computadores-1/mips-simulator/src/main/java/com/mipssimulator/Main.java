@@ -6,6 +6,8 @@ import com.mipssimulator.simulator.Registradores;
 import com.mipssimulator.simulator.Ula;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Main {
@@ -16,61 +18,74 @@ public class Main {
 //        List<String> programa = reader.readFile(path);
         //for (int i = 0; i < programa.size(); i++) {
 
+        List<String> allLines = Arrays.asList(("0x25490001\n" +
+                "0x256a0002\n" +
+                "0x01495821\n" +
+                "0x01696026\n" +
+                "0xae300000\n" +
+                "0x8e310000\n" +
+                "0x012b6824\n" +
+                "0x012a282a").split("\n"));
+
+        allLines.removeIf(line -> line.startsWith("#"));
+        allLines.removeIf(line -> line == null || line.trim().isEmpty());
         Ula ula = new Ula();
         Registradores registradores = new Registradores();
-        BlocoControle blocoControle = new BlocoControle();
         Memoria memoria = new Memoria();
+        memoria.carregarInstrucoes(allLines);
 
-        //Etapa 1
         Integer pc = 0x400000;
+        for (int i = 0; i < allLines.size(); i++) {
+            System.out.println("Executando linha: " + (i + 1));
+            BlocoControle blocoControle = new BlocoControle();
+            //Etapa 1
 
-        final Integer enderecoPC = muxPC(0, pc, blocoControle);
-        final Integer valorMemoriaPC = memoria.executar(enderecoPC, 0, blocoControle);
+            final Integer enderecoPC = muxPC(0, pc, blocoControle);
+            final Integer valorMemoriaPC = memoria.executar(enderecoPC, 0, blocoControle);
 
-        Integer muxPCA = muxA(blocoControle, 0, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
-        Integer muxPCB = muxB(blocoControle, 0, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
+            Integer muxPCA = muxA(blocoControle, 0, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
+            Integer muxPCB = muxB(blocoControle, 0, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
 
-        final String ulaOP = ula.operacaoUla("", "", blocoControle);// q faz isso?
-        pc = ula.calcular(muxPCA, muxPCB, ulaOP);// faz pc +=4 para avancar no programa
+            final String ulaOP = ula.operacaoUla("", "", blocoControle);// q faz isso?
+            pc = ula.calcular(muxPCA, muxPCB, ulaOP);// faz pc +=4 para avancar no programa
 
-        //Etapa 2
-        String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(valorMemoriaPC) | 0x100000000L).substring(1);
-        //divisão de partes do opcode
-        String opCode = instructionBin.substring(0, 6);// opcode da instrucao
-        String reg1 = instructionBin.substring(6, 11);// rd
-        String reg2 = instructionBin.substring(11, 16);// rt
-        String reg3 = instructionBin.substring(16, 21);// rs
-        String func = instructionBin.substring(16, 32);// ultimos 15 bits (imediato/func)
+            //Etapa 2
+            String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(valorMemoriaPC) | 0x100000000L).substring(1);
+            //divisão de partes do opcode
+            String opCode = instructionBin.substring(0, 6);// opcode da instrucao
+            String reg1 = instructionBin.substring(6, 11);// rd
+            String reg2 = instructionBin.substring(11, 16);// rt
+            String reg3 = instructionBin.substring(16, 21);// rs
+            String func = instructionBin.substring(16, 32);// ultimos 16 bits (imediato/func)
 
-        blocoControle.defineOpcode(opCode);// define os sinais do bloco de controle
+            blocoControle.defineOpcode(opCode);// define os sinais do bloco de controle
 
-        final Integer A = registradores.busca(reg1);// bloco A
-        final Integer B = registradores.busca(reg2);// bloco B
+            final Integer A = registradores.busca(reg1);// bloco A
+            final Integer B = registradores.busca(reg2);// bloco B
 
-        String valorEstendido = extensaoSinal(func);// extende o valor
+            String valorEstendido = extensaoSinal(func);// extende o valor
 
-        Integer muxA = muxA(blocoControle, A, pc);// Guarda a saida do multiplexador entre A e a ula
-        Integer muxB = muxB(blocoControle, B, valorEstendido);// Guarda a saida do multiplexador entre B e a ula
+            //Etapa 2-3
+            Integer muxA = muxA(blocoControle, A, pc);// Guarda a saida do multiplexador entre A e a ula
+            Integer muxB = muxB(blocoControle, B, valorEstendido);// Guarda a saida do multiplexador entre B e a ula
 
-        final String opUla = ula.operacaoUla(func.substring(10, 16), opCode, blocoControle);
-        final Integer resultadoUla = ula.calcular(muxA, muxB, opUla);// guarda a saida da operacao da ula
+            final String opUla = ula.operacaoUla(func.substring(10, 16), opCode, blocoControle);
+            final Integer resultadoUla = ula.calcular(muxA, muxB, opUla);// guarda a saida da operacao da ula
 
-        final String regEscrita = muxRegistradorEscrito(blocoControle, reg2, reg3);// registrador que sera escrito
-        registradores.escreve(resultadoUla, regEscrita, blocoControle);// escreve sobre regEscrita
+            //Etapa 3
+            final String regEscrita = muxRegistradorEscrito(blocoControle, reg2, reg3);// registrador que sera escrito
+            registradores.escreve(resultadoUla, regEscrita, blocoControle);// escreve sobre regEscrita
 
+            defineOpCodeEtapa3(blocoControle, opCode);
 
-        //Etapa 3
-        defineOpCodeEtapa3(blocoControle, opCode);
+            final Integer endereco = muxPC(resultadoUla, pc, blocoControle);
+            final Integer registradorDadosMemoria = memoria.executar(endereco, B, blocoControle);
 
-        final Integer endereco = muxPC(resultadoUla, pc, blocoControle);
-        final Integer registradorDadosMemoria = memoria.executar(endereco, B, blocoControle);
+            final Integer dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, resultadoUla);// Guarda a saida do mux entre a bloco de dados da memoria e o bloco de registradores
 
-        final Integer dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, resultadoUla);// Guarda a saida do mux entre a bloco de dados da memoria e o bloco de registradores
-
-        final String regEscrita1 = muxRegistradorEscrito(blocoControle, reg2, reg3);// Guarda a saida do mux entre o registrador de instrucoes e o bloco de registradores
-        registradores.escreve(dadoEscrita, regEscrita1, blocoControle);// escreve no dado a ser escrita
-
-        //}
+            final String regEscrita1 = muxRegistradorEscrito(blocoControle, reg2, reg3);// Guarda a saida do mux entre o registrador de instrucoes e o bloco de registradores
+            registradores.escreve(dadoEscrita, regEscrita1, blocoControle);// escreve no dado a ser escrita
+        }
     }
 
     private static void defineOpCodeEtapa3(BlocoControle blocoControle, String opCode) {
@@ -118,7 +133,7 @@ public class Main {
     //implementação do multiplexador que recebe do PC
     //caso louD esteja ligado, passa o valor da ula saída para a memória, caso contrário passará um valor novo
     private static Integer muxPC(Integer valorUla, Integer valorPC, BlocoControle blocoControle) {
-        if (blocoControle.getLouD().equals("1")) {
+        if (blocoControle.getIouD().equals("1")) {
             return valorUla;
         } else {
             return valorPC;
@@ -133,7 +148,7 @@ public class Main {
         } else if (blocoControle.getUlaFonteB().equals("01")) {
             return 4;
         } else if (blocoControle.getUlaFonteB().equals("10")) {
-            return Integer.valueOf(valorEstendido, 2);
+            return Integer.parseInt(valorEstendido, 2);
         }
         return null;
     }
