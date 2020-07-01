@@ -7,6 +7,7 @@ import com.mipssimulator.simulator.Ula;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 
 //        0x00400000  0x3c011001  lui $1,4097           1    la $s0, A
@@ -37,7 +38,6 @@ import java.util.List;
 //        0x00400034  0x8e110000  lw $17,0($16)         11   lw $s1,0($s0)
 //        0x00400038  0x312d0001  andi $13,$9,1         12   and $t5,$t1,1
 //        0x0040003c  0x0129702a  slt $14,$9,$9         13   slt $t6,$t1,$t1
-
 
 
 //        4194304  0x3c011001  lui $1,4097           1    la $s0, A
@@ -88,11 +88,13 @@ public class Main {
         memoria.carregar(allLines);
 
         Long pc = 0x400000L;
+        boolean printMenu = true;
         for (int i = 0; i < allLines.size(); i++) {
+
             if (allLines.get(i).toLowerCase().contains(".data")) {
                 break;
             }
-            System.out.println("Executando linha: " + (i + 1));
+            System.out.println("\n\u001B[34m" + "Executando linha: " + (i + 1) + "\u001B[0m");
             BlocoControle blocoControle = new BlocoControle();
 
             //Etapa 1
@@ -139,6 +141,14 @@ public class Main {
 
             final String regEscrita1 = muxRegistradorEscrito(blocoControle, reg2, reg3);// Guarda a saida do mux entre o registrador de instrucoes e o bloco de registradores
             registradores.escreve(dadoEscrita, regEscrita1, blocoControle);// escreve no dado a ser escrita
+
+            if (printMenu) {
+                Scanner sc = new Scanner(System.in);
+                System.out.println("1 - Proxima Instrução");
+                System.out.println("2 - Avançar para o Final");
+                final Integer next = sc.nextInt();
+                printMenu = next.equals(1);
+            }
         }
     }
 
