@@ -19,13 +19,13 @@ public class BlocoControle {
         this.pcEscCond = "0";
         this.pcEsc = "0";
         this.louD = "0";
-        this.lerMem = "0";
+        this.lerMem = "1";
         this.escMem = "0";
         this.memParaReg = "0";
-        this.iREsc = "0";
+        this.iREsc = "1";
         this.fontePC = "0";
-        this.ulaOp = "0";
-        this.ulaFonteB = "0";
+        this.ulaOp = "00";
+        this.ulaFonteB = "01";
         this.ulaFonteA = "0";
         this.escReg = "0";
         this.regDst = "0";
@@ -145,6 +145,19 @@ public class BlocoControle {
             setRegDst("0");
             setEscReg("1");
             setMemParaReg("0");
+        }
+
+        final String tipoAddiuOpCode = "001001";
+        final String tipoLuiOpCode = "001111";
+        final String tipoAndiOpCode = "001100";
+        final String tipoOriOpCode = "001101";
+        if (opCode.equals(tipoAddiuOpCode) || opCode.equals(tipoAndiOpCode) || opCode.equals(tipoLuiOpCode)
+                || opCode.equals(tipoOriOpCode)) {// se o opcode encotrado for o opcode de um tipo R
+            setUlaOp("00");
+            setUlaFonteB("10");
+            setMemParaReg("0");
+            setRegDst("0");
+            setEscReg("0");
         }
 
         final String swOpcode = "101011";// opcode sw

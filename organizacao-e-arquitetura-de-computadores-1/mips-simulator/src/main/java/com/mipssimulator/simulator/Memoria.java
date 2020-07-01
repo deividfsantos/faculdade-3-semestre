@@ -8,6 +8,7 @@ public class Memoria {
     public Memoria() {
         this.memoria = new int[50];
         memoria[2] = 15;
+        memoria[0] = 0x35280064;
         //this.pc = 0x00400000;
     }
 
