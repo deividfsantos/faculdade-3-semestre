@@ -141,7 +141,7 @@ public class BlocoControle {
         final String tipoROpCode = "000000"; // opcode dos tipos R
         if (opCode.equals(tipoROpCode)) {// se o opcode encotrado for o opcode de um tipo R
             setUlaOp("10");
-            setRegDst("0");
+            setRegDst("1");
             setEscReg("1");
             setMemParaReg("0");
         }
@@ -156,7 +156,7 @@ public class BlocoControle {
             setUlaFonteB("10");
             setMemParaReg("0");
             setRegDst("0");
-            setEscReg("0");
+            setEscReg("1");
         }
 
         final String swOpcode = "101011";// opcode sw
@@ -168,14 +168,14 @@ public class BlocoControle {
                 setIouD("1");
                 setMemParaReg("1");
                 setLerMem("1");
-                setRegDst("1");
+                setRegDst("0");
                 setEscReg("1");
             }
             if (opCode.equals(swOpcode)) {
                 setIouD("1");
                 setEscReg("1");
                 setRegDst("0");
-                setEscReg("1");
+                setEscReg("0");
                 setEscMem("1");
             }
         }

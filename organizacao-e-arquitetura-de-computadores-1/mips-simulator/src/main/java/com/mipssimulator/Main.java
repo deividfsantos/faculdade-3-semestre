@@ -5,52 +5,108 @@ import com.mipssimulator.simulator.Memoria;
 import com.mipssimulator.simulator.Registradores;
 import com.mipssimulator.simulator.Ula;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 
+//        0x00400000  0x3c011001  lui $1,4097           1    la $s0, A
+//        0x00400004  0x34300000  ori $16,$1,0
+//        0x00400008  0x25490001  addiu $9,$10,1        2    addiu $t1,$t2,1
+//        0x0040000c  0x256a0002  addiu $10,$11,2       3    addiu $t2,$t3,2
+//        0x00400010  0x01495821  addu $11,$10,$9       4    addu $t3,$t2,$t1
+//        0x00400014  0x01696026  xor $12,$11,$9        5    xor $t4,$t3,$t1
+//        0x00400018  0xae0b0000  sw $11,0($16)         6    sw $t3,0($s0)
+//        0x0040001c  0x8e110000  lw $17,0($16)         7    lw $s1,0($s0)
+//        0x00400020  0x312d0001  andi $13,$9,1         8    and $t5,$t1,1
+//        0x00400024  0x0129702a  slt $14,$9,$9         9    slt $t6,$t1,$t1
+
+
+//        0x00400000  0x3c011001  lui $1,4097           1    la $s0, A
+//        0x00400004  0x34300000  ori $16,$1,0
+//        0x00400008  0x3c011001  lui $1,4097           2    la $t7, B
+//        0x0040000c  0x342f0004  ori $15,$1,4
+//        0x00400010  0x3c011001  lui $1,4097           3    la $t8, C
+//        0x00400014  0x34380008  ori $24,$1,8
+//        0x00400018  0x25490001  addiu $9,$10,1        4    addiu $t1,$t2,1
+//        0x0040001c  0x256a0002  addiu $10,$11,2       5    addiu $t2,$t3,2
+//        0x00400020  0x01495821  addu $11,$10,$9       6    addu $t3,$t2,$t1
+//        0x00400024  0x01696026  xor $12,$11,$9        7    xor $t4,$t3,$t1
+//        0x00400028  0xae0b0000  sw $11,0($16)         8    sw $t3,0($s0)
+//        0x0040002c  0xae040004  sw $4,4($16)          9    sw $a0,4($s0)
+//        0x00400030  0xaf050000  sw $5,0($24)          10   sw $a1,0($t8)
+//        0x00400034  0x8e110000  lw $17,0($16)         11   lw $s1,0($s0)
+//        0x00400038  0x312d0001  andi $13,$9,1         12   and $t5,$t1,1
+//        0x0040003c  0x0129702a  slt $14,$9,$9         13   slt $t6,$t1,$t1
+
+
+
+//        4194304  0x3c011001  lui $1,4097           1    la $s0, A
+//        4194308  0x34300000  ori $16,$1,0
+//        4194312  0x3c011001  lui $1,4097           2    la $t7, B
+//        4194316  0x342f0004  ori $15,$1,4
+//        4194320  0x3c011001  lui $1,4097           3    la $t8, C
+//        4194324  0x34380008  ori $24,$1,8
+//        4194328  0x25490001  addiu $9,$10,1        4    addiu $t1,$t2,1
+//        4194332  0x256a0002  addiu $10,$11,2       5    addiu $t2,$t3,2
+//        4194336  0x01495821  addu $11,$10,$9       6    addu $t3,$t2,$t1
+//        4194340  0x01696026  xor $12,$11,$9        7    xor $t4,$t3,$t1
+//        4194344  0xae0b0000  sw $11,0($16)         8    sw $t3,0($s0)
+//        4194348  0x8e040004  lw $4,4($16)          9    lw $a0,4($s0)
+//        4194352  0x8f050000  lw $5,0($24)          10   lw $a1,0($t8)
+//        4194356  0x8e110000  lw $17,0($16)         11   lw $s1,0($s0)
+//        4194360  0x312d0001  andi $13,$9,1         12   and $t5,$t1,1
+//        4194364  0x0129702a  slt $14,$9,$9         13   slt $t6,$t1,$t1
+
 public class Main {
-    public static void main(String[] args) throws IOException {
-
-//        Reader reader = new Reader();
-//        String path = "";
-//        List<String> programa = reader.readFile(path);
-        //for (int i = 0; i < programa.size(); i++) {
-
-        List<String> allLines = Arrays.asList(("0x25490001\n" +
+    public static void main(String[] args) {
+        List<String> allLines = Arrays.asList(("0x3c011001\n" +
+                "0x34300000\n" +
+                "0x3c011001\n" +
+                "0x342f0004\n" +
+                "0x3c011001\n" +
+                "0x34380008\n" +
+                "0x25490001\n" +
                 "0x256a0002\n" +
                 "0x01495821\n" +
                 "0x01696026\n" +
-                "0xae300000\n" +
-                "0x8e310000\n" +
-                "0x012b6824\n" +
-                "0x012a282a").split("\n"));
+                "0xae0b0000\n" +
+                "0x8e040004\n" +
+                "0x8f050000\n" +
+                "0x8e110000\n" +
+                "0x312d0001\n" +
+                "0x0129702a\n" +
+                ".data\n" +
+                "A: .word 123\n" +
+                "B: .word 321\n" +
+                "C: .word 6").split("\n"));
 
         allLines.removeIf(line -> line.startsWith("#"));
         allLines.removeIf(line -> line == null || line.trim().isEmpty());
         Ula ula = new Ula();
         Registradores registradores = new Registradores();
         Memoria memoria = new Memoria();
-        memoria.carregarInstrucoes(allLines);
+        memoria.carregar(allLines);
 
-        Integer pc = 0x400000;
+        Long pc = 0x400000L;
         for (int i = 0; i < allLines.size(); i++) {
+            if (allLines.get(i).toLowerCase().contains(".data")) {
+                break;
+            }
             System.out.println("Executando linha: " + (i + 1));
             BlocoControle blocoControle = new BlocoControle();
+
             //Etapa 1
+            final Long enderecoPC = muxPC(0L, pc, blocoControle);// Saida do mux do pc que eh o proprio endereco de pc
+            final Long valorMemoriaPC = memoria.executar(enderecoPC, 0L, blocoControle);// leitura e escrita na memoria
 
-            final Integer enderecoPC = muxPC(0, pc, blocoControle);// Saida do mux do pc que eh o proprio endereco de pc
-            final Integer valorMemoriaPC = memoria.executar(enderecoPC, 0, blocoControle);// leitura e escrita na memoria
-
-            Integer muxPCA = muxA(blocoControle, 0, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
-            Integer muxPCB = muxB(blocoControle, 0, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
+            Long muxPCA = muxA(blocoControle, 0L, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
+            Long muxPCB = muxB(blocoControle, 0L, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
 
             final String ulaOP = ula.operacaoUla("", "", blocoControle);// Define operacao da ula
             pc = ula.calcular(muxPCA, muxPCB, ulaOP);// faz pc +=4 para avancar no programa
 
             //Etapa 2
-            String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(valorMemoriaPC) | 0x100000000L).substring(1);
+            String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(valorMemoriaPC.intValue()) | 0x100000000L).substring(1);
             //divisão de partes do opcode
             String opCode = instructionBin.substring(0, 6);// opcode da instrucao
             String reg1 = instructionBin.substring(6, 11);// rs
@@ -60,43 +116,29 @@ public class Main {
 
             blocoControle.defineOpcode(opCode);// define os sinais do bloco de controle
 
-            final Integer A = registradores.busca(reg1);// bloco A
-            final Integer B = registradores.busca(reg2);// bloco B
+            final Long A = registradores.busca(reg1);// bloco A
+            final Long B = registradores.busca(reg2);// bloco B
 
             String valorEstendido = extensaoSinal(func);// estende o valor
 
             //Etapa 2-3
-            Integer muxA = muxA(blocoControle, A, pc);// Guarda a saida do multiplexador entre A e a ula
-            Integer muxB = muxB(blocoControle, B, valorEstendido);// Guarda a saida do multiplexador entre B e a ula
+            Long muxA = muxA(blocoControle, A, pc);// Guarda a saida do multiplexador entre A e a ula
+            Long muxB = muxB(blocoControle, B, valorEstendido);// Guarda a saida do multiplexador entre B e a ula
 
             final String opUla = ula.operacaoUla(func.substring(10, 16), opCode, blocoControle);// define o que a ula fara
-            final Integer resultadoUla = ula.calcular(muxA, muxB, opUla);// guarda a saida da operacao da ula
+            final Long resultadoUla = ula.calcular(muxA, muxB, opUla);// guarda a saida da operacao da ula
 
             //Etapa 3
             final String regEscrita = muxRegistradorEscrito(blocoControle, reg2, reg3);// registrador que sera escrito
             registradores.escreve(resultadoUla, regEscrita, blocoControle);// escreve sobre regEscrita
 
-            defineOpCodeEtapa3(blocoControle, opCode);// atualiza controle
+            final Long endereco = muxPC(resultadoUla, pc, blocoControle);// guarda a saida da ula ou o pc dependendo do controle
+            final Long registradorDadosMemoria = memoria.executar(endereco, B, blocoControle);// ler e escrever endereco na memoria
 
-            final Integer endereco = muxPC(resultadoUla, pc, blocoControle);// guarda a saida da ula ou o pc dependendo do controle
-            final Integer registradorDadosMemoria = memoria.executar(endereco, B, blocoControle);// ler e escrever endereco na memoria
-
-            final Integer dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, resultadoUla);// Guarda a saida do mux entre a bloco de dados da memoria e o bloco de registradores
+            final Long dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, resultadoUla);// Guarda a saida do mux entre a bloco de dados da memoria e o bloco de registradores
 
             final String regEscrita1 = muxRegistradorEscrito(blocoControle, reg2, reg3);// Guarda a saida do mux entre o registrador de instrucoes e o bloco de registradores
             registradores.escreve(dadoEscrita, regEscrita1, blocoControle);// escreve no dado a ser escrita
-        }
-    }
-
-    private static void defineOpCodeEtapa3(BlocoControle blocoControle, String opCode) {// atualiza sinais do controle para a etapa3
-        final String tipoAddiuOpCode = "001001";
-        final String tipoAndiOpCode = "001100";
-        final String tipoLuiOpCode = "001111";
-        final String tipoOriOpCode = "001101";
-        if (opCode.equals(tipoAddiuOpCode) || opCode.equals(tipoAndiOpCode) || opCode.equals(tipoLuiOpCode)
-                || opCode.equals(tipoOriOpCode)) {
-            blocoControle.setEscReg("1");
-            blocoControle.setRegDst("1");
         }
     }
 
@@ -109,19 +151,19 @@ public class Main {
     }
 
     //implementação do multiplexador que da entrada no bloco de registradores como "Reg a ser escrito"
-    //retorna reg0 se RegDst estiver ligado e reg1(n sei tb) caso contrário
-    private static String muxRegistradorEscrito(BlocoControle blocoControle, String reg0, String reg1) {
-        if (blocoControle.getRegDst().equals("1")) {
-            return reg0;
-        } else if (blocoControle.getRegDst().equals("0")) {
-            return reg1;
+    //retorna reg1 se RegDst estiver ligado e reg2 caso contrário
+    private static String muxRegistradorEscrito(BlocoControle blocoControle, String reg2, String reg3) {
+        if (blocoControle.getRegDst().equals("0")) {
+            return reg2;
+        } else if (blocoControle.getRegDst().equals("1")) {
+            return reg3;
         }
         return null;
     }
 
     //implementação do multiplexador que da entrada no bloco de registradores como "Dado a ser escrito"
     //retorna registrador de dados da memória caso MemParaReg do BC seja 1, caso contrário, retorna o valor da Ula Saída
-    private static Integer muxDadoEscrito(BlocoControle blocoControle, Integer valorRegistradorDadosMemoria, Integer valorUla) {
+    private static Long muxDadoEscrito(BlocoControle blocoControle, Long valorRegistradorDadosMemoria, Long valorUla) {
         if (blocoControle.getMemParaReg().equals("1")) {
             return valorRegistradorDadosMemoria;
         } else if (blocoControle.getMemParaReg().equals("0")) {
@@ -132,7 +174,7 @@ public class Main {
 
     //implementação do multiplexador que recebe do PC
     //caso louD esteja ligado, passa o valor da ula saída para a memória, caso contrário passará um valor novo
-    private static Integer muxPC(Integer valorUla, Integer valorPC, BlocoControle blocoControle) {
+    private static Long muxPC(Long valorUla, Long valorPC, BlocoControle blocoControle) {
         if (blocoControle.getIouD().equals("1")) {
             return valorUla;
         } else {
@@ -142,20 +184,20 @@ public class Main {
 
     //implementação do multiplexador que recebe uma entrada do bloco B
     //retorna o valor de B caso ULAFonteB do BC seja 00, 4 se 01, o valor de sinal estendido se 10 e o valor com 2 bits desligados se 11
-    private static Integer muxB(BlocoControle blocoControle, Integer b, String valorEstendido) {
+    private static Long muxB(BlocoControle blocoControle, Long b, String valorEstendido) {
         if (blocoControle.getUlaFonteB().equals("00")) {
             return b;
         } else if (blocoControle.getUlaFonteB().equals("01")) {
-            return 4;
+            return 4L;
         } else if (blocoControle.getUlaFonteB().equals("10")) {
-            return Integer.parseInt(valorEstendido, 2);
+            return Long.parseLong(valorEstendido, 2);
         }
         return null;
     }
 
     //implementação do multiplexador que recebe uma entrada do bloco A
     //retorna o valor de A caso ULAFonteA seja 1, caso contrário retorna PC
-    private static Integer muxA(BlocoControle blocoControle, Integer a, Integer valorPc) {
+    private static Long muxA(BlocoControle blocoControle, Long a, Long valorPc) {
         if (blocoControle.getUlaFonteA().equals("1")) {
             return a;
         } else {

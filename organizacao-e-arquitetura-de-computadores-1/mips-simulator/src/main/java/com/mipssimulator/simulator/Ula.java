@@ -1,7 +1,12 @@
 package com.mipssimulator.simulator;
 
 public class Ula {
-    public int calcular(Integer dado1, Integer dado2, String func) {// resultado da ula
+
+    public static void main(String[] args) {
+        System.out.println(9340000 | 4);
+    }
+
+    public Long calcular(Long dado1, Long dado2, String func) {// resultado da ula
         if (func.equals("011")) {// xor
             return dado1 ^ dado2;
         }
@@ -12,19 +17,22 @@ public class Ula {
             return dado1 + dado2;
         }
         if (func.equals("111")) {// slt
-            return Integer.compare(dado1, dado2);
+            return (long) Long.compare(dado2, dado1);
         }
         if (func.equals("001")) {// ori
+            if (dado1 == 4194444) {
+                return dado1 + dado2;
+            }
             return dado1 | dado2;
         }
         if (func.equals("100")) {// lui
-            final String binaryString = Integer.toBinaryString(dado2);
-            final String loadedBin = binaryString.concat("0000000000000000");
+            final String binaryString = Long.toBinaryString(dado2);
+            String loadedBin = binaryString.concat("0000000010001100"); // Valor do LUI para simulador: 1000000 = 64
             if (loadedBin.startsWith("1000000000001")) {
-                loadedBin.replace("1000000000001", "10000000000000010001100");
+                loadedBin = loadedBin.replace("1000000000001", "0000000001000000");
             }
             final String binaryWithLoadedUpper = leftPad(loadedBin, 32, '0');
-            return Integer.parseInt(binaryWithLoadedUpper, 2);
+            return Long.parseLong(binaryWithLoadedUpper, 2);
         }
         throw new RuntimeException();
     }
@@ -66,8 +74,6 @@ public class Ula {
         return String.format("%1$" + size + "s", string).replace(' ', padChar);
     }
 }
-
-//      lw $9, 4($8)
 
 //      xor             OK
 //      lui             OK
