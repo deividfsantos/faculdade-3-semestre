@@ -1,11 +1,6 @@
 package com.mipssimulator.simulator;
 
 public class Ula {
-
-    public static void main(String[] args) {
-        System.out.println(9340000 | 4);
-    }
-
     public Long calcular(Long dado1, Long dado2, String func) {// resultado da ula
         if (func.equals("011")) {// xor
             return dado1 ^ dado2;

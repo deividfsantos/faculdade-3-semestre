@@ -1,11 +1,12 @@
 package com.mipssimulator;
 
+import com.mipssimulator.file.Reader;
 import com.mipssimulator.simulator.BlocoControle;
 import com.mipssimulator.simulator.Memoria;
 import com.mipssimulator.simulator.Registradores;
 import com.mipssimulator.simulator.Ula;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -58,42 +59,25 @@ import java.util.Scanner;
 //        4194364  0x0129702a  slt $14,$9,$9         13   slt $t6,$t1,$t1
 
 public class Main {
-    public static void main(String[] args) {
-        List<String> allLines = Arrays.asList(("0x3c011001\n" +
-                "0x34300000\n" +
-                "0x3c011001\n" +
-                "0x342f0004\n" +
-                "0x3c011001\n" +
-                "0x34380008\n" +
-                "0x25490001\n" +
-                "0x256a0002\n" +
-                "0x01495821\n" +
-                "0x01696026\n" +
-                "0xae0b0000\n" +
-                "0x8e040004\n" +
-                "0x8f050000\n" +
-                "0x8e110000\n" +
-                "0x312d0001\n" +
-                "0x0129702a\n" +
-                ".data\n" +
-                "A: .word 123\n" +
-                "B: .word 321\n" +
-                "C: .word 6").split("\n"));
-
-        allLines.removeIf(line -> line.startsWith("#"));
-        allLines.removeIf(line -> line == null || line.trim().isEmpty());
+    public static void main(String[] args) throws IOException {
+        Reader reader = new Reader();
+        Scanner sc = new Scanner(System.in);
         Ula ula = new Ula();
         Registradores registradores = new Registradores();
         Memoria memoria = new Memoria();
-        memoria.carregar(allLines);
+
+        System.out.println("Digite o caminho do arquivo: ");
+        String filePath = sc.nextLine();
+        List<String> linhas = reader.readFile(filePath);
+
+        linhas.removeIf(line -> line.startsWith("#"));
+        linhas.removeIf(line -> line == null || line.trim().isEmpty());
+
+        memoria.carregar(linhas);
 
         Long pc = 0x400000L;
         boolean printMenu = true;
-        for (int i = 0; i < allLines.size(); i++) {
-
-            if (allLines.get(i).toLowerCase().contains(".data")) {
-                break;
-            }
+        for (int i = 0; i < linhas.size() && !linhas.get(i).contains(".data"); i++) {
             System.out.println("\n\u001B[34m" + "Executando linha: " + (i + 1) + "\u001B[0m");
             BlocoControle blocoControle = new BlocoControle();
 
@@ -143,7 +127,6 @@ public class Main {
             registradores.escreve(dadoEscrita, regEscrita1, blocoControle);// escreve no dado a ser escrita
 
             if (printMenu) {
-                Scanner sc = new Scanner(System.in);
                 System.out.println("1 - Proxima Instrução");
                 System.out.println("2 - Avançar para o Final");
                 final Integer next = sc.nextInt();
