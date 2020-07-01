@@ -9,6 +9,7 @@ sw $t3,0($s0)
 lw $a0,4($s0)
 lw $a1,0($t8)
 lw $s1,0($s0)
+sll $a3, $s1, 4
 and $t5,$t1,1
 slt $t6,$t1,$t1
 

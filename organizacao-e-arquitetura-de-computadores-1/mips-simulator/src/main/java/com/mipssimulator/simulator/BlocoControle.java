@@ -135,7 +135,7 @@ public class BlocoControle {
         this.regDst = regDst;
     }
 
-    public void defineOpcode(String opCode) {// define todas as entradas do controle
+    public void defineOpcode(String opCode, String funct) {// define todas as entradas do controle
         setUlaFonteB("00");
         setUlaFonteA("1");
         final String tipoROpCode = "000000"; // opcode dos tipos R
@@ -144,6 +144,9 @@ public class BlocoControle {
             setRegDst("1");
             setEscReg("1");
             setMemParaReg("0");
+            if (funct.equals("000000") || funct.equals("000010")) { //Fonte B para SLL e SRL
+                setUlaFonteB("11");
+            }
         }
 
         final String tipoAddiuOpCode = "001001";

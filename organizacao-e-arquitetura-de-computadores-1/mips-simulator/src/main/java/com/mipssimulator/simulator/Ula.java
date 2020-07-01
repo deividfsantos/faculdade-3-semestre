@@ -14,6 +14,12 @@ public class Ula {
         if (func.equals("111")) {// slt
             return (long) Long.compare(dado2, dado1);
         }
+        if (func.equals("101")) {// sll
+            return dado2 << dado1;
+        }
+        if (func.equals("110")) {// srl
+            return dado2 >> dado1;
+        }
         if (func.equals("001")) {// ori
             if (dado1 == 4194444) {
                 return dado1 + dado2;
@@ -46,6 +52,9 @@ public class Ula {
             return "010";
         }
         if (blocoControle.getUlaOp().equals("10")) {// ulaop == 10
+            if (func.equals("000000")) {
+                return "101";
+            }
             if (func.equals("100001")) {
                 return "010";
             }
@@ -60,6 +69,9 @@ public class Ula {
             }
             if (func.equals("100110")) {
                 return "011";
+            }
+            if (func.equals("000010")) {
+                return "110";
             }
         }
         return null;

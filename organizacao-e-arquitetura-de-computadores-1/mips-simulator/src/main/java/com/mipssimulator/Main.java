@@ -85,8 +85,8 @@ public class Main {
             final Long enderecoPC = muxPC(0L, pc, blocoControle);// Saida do mux do pc que eh o proprio endereco de pc
             final Long valorMemoriaPC = memoria.executar(enderecoPC, 0L, blocoControle);// leitura e escrita na memoria
 
-            Long muxPCA = muxA(blocoControle, 0L, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
-            Long muxPCB = muxB(blocoControle, 0L, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
+            Long muxPCA = muxA(blocoControle, 0L, 0L, pc, "");// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
+            Long muxPCB = muxB(blocoControle, 0L, "", "");// Guarda o valor 4 para a ula somar com o endereco de Pc
 
             final String ulaOP = ula.operacaoUla("", "", blocoControle);// Define operacao da ula
             pc = ula.calcular(muxPCA, muxPCB, ulaOP);// faz pc +=4 para avancar no programa
@@ -98,20 +98,21 @@ public class Main {
             String reg1 = instructionBin.substring(6, 11);// rs
             String reg2 = instructionBin.substring(11, 16);// rt
             String reg3 = instructionBin.substring(16, 21);// rd
-            String func = instructionBin.substring(16, 32);// ultimos 16 bits (imediato/func)
+            String immediate = instructionBin.substring(16, 32);// ultimos 16 bits (imediato/func)
 
-            blocoControle.defineOpcode(opCode);// define os sinais do bloco de controle
+            final String funct = immediate.substring(10, 16);
+            blocoControle.defineOpcode(opCode, funct);// define os sinais do bloco de controle
 
             final Long A = registradores.busca(reg1);// bloco A
             final Long B = registradores.busca(reg2);// bloco B
 
-            String valorEstendido = extensaoSinal(func);// estende o valor
+            String valorEstendido = extensaoSinal(immediate);// estende o valor
 
             //Etapa 2-3
-            Long muxA = muxA(blocoControle, A, pc);// Guarda a saida do multiplexador entre A e a ula
-            Long muxB = muxB(blocoControle, B, valorEstendido);// Guarda a saida do multiplexador entre B e a ula
+            Long muxA = muxA(blocoControle, A, B, pc, funct);// Guarda a saida do multiplexador entre A e a ula
+            Long muxB = muxB(blocoControle, B, valorEstendido, immediate.substring(5, 10));// Guarda a saida do multiplexador entre B e a ula
 
-            final String opUla = ula.operacaoUla(func.substring(10, 16), opCode, blocoControle);// define o que a ula fara
+            final String opUla = ula.operacaoUla(funct, opCode, blocoControle);// define o que a ula fara
             final Long resultadoUla = ula.calcular(muxA, muxB, opUla);// guarda a saida da operacao da ula
 
             //Etapa 3
@@ -177,24 +178,29 @@ public class Main {
 
     //implementação do multiplexador que recebe uma entrada do bloco B
     //retorna o valor de B caso ULAFonteB do BC seja 00, 4 se 01, o valor de sinal estendido se 10 e o valor com 2 bits desligados se 11
-    private static Long muxB(BlocoControle blocoControle, Long b, String valorEstendido) {
+    private static Long muxB(BlocoControle blocoControle, Long b, String valorEstendido, String shamt) {
         if (blocoControle.getUlaFonteB().equals("00")) {
             return b;
         } else if (blocoControle.getUlaFonteB().equals("01")) {
             return 4L;
         } else if (blocoControle.getUlaFonteB().equals("10")) {
             return Long.parseLong(valorEstendido, 2);
+        } else if (blocoControle.getUlaFonteB().equals("11")) {
+            return Long.parseLong(shamt, 2);
         }
         return null;
     }
 
     //implementação do multiplexador que recebe uma entrada do bloco A
     //retorna o valor de A caso ULAFonteA seja 1, caso contrário retorna PC
-    private static Long muxA(BlocoControle blocoControle, Long a, Long valorPc) {
+    private static Long muxA(BlocoControle blocoControle, Long a, Long b, Long valorPc, String funct) {
         if (blocoControle.getUlaFonteA().equals("1")) {
             return a;
-        } else {
+        } else if (blocoControle.getUlaFonteA().equals("0")) {
             return valorPc;
+        } else if (funct.equals("000000") || funct.equals("000010")) {
+            return b;
         }
+        return null;
     }
 }
