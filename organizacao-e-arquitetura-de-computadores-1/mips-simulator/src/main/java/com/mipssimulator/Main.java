@@ -27,11 +27,11 @@ public class Main {
         final Integer enderecoPC = muxPC(0, pc, blocoControle);
         final Integer valorMemoriaPC = memoria.executar(enderecoPC, 0, blocoControle);
 
-        Integer muxPCA = muxA(blocoControle, 0, pc);// Guarda a saida do multiplexador entre A e a ula
-        Integer muxPCB = muxB(blocoControle, 0, "");// Guarda a saida do multiplexador entre B e a ula
+        Integer muxPCA = muxA(blocoControle, 0, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
+        Integer muxPCB = muxB(blocoControle, 0, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
 
-        final String ulaOP = ula.operacaoUla("", "", blocoControle);
-        pc = ula.calcular(muxPCA, muxPCB, ulaOP);// guarda a saida da operacao da ula
+        final String ulaOP = ula.operacaoUla("", "", blocoControle);// q faz isso?
+        pc = ula.calcular(muxPCA, muxPCB, ulaOP);// faz pc +=4 para avancar no programa
 
         //Etapa 2
         String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(valorMemoriaPC) | 0x100000000L).substring(1);
@@ -40,7 +40,7 @@ public class Main {
         String reg1 = instructionBin.substring(6, 11);// rd
         String reg2 = instructionBin.substring(11, 16);// rt
         String reg3 = instructionBin.substring(16, 21);// rs
-        String func = instructionBin.substring(16, 32);// immediate da funcao
+        String func = instructionBin.substring(16, 32);// ultimos 15 bits (imediato/func)
 
         blocoControle.defineOpcode(opCode);// define os sinais do bloco de controle
 

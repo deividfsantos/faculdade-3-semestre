@@ -140,7 +140,6 @@ public class BlocoControle {
         setUlaFonteA("1");
         final String tipoROpCode = "000000"; // opcode dos tipos R
         if (opCode.equals(tipoROpCode)) {// se o opcode encotrado for o opcode de um tipo R
-            setUlaOp("00");
             setUlaOp("10");
             setRegDst("0");
             setEscReg("1");
