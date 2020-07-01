@@ -1,5 +1,6 @@
 package com.mipssimulator.simulator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Memoria {
@@ -15,7 +16,7 @@ public class Memoria {
     public void carregar(List<String> allLines) {
         int data = 0;
         data = carregarInstrucoes(allLines, data);
-        carregarDados(allLines.subList(data + 1, allLines.size()));
+        carregarDados(data == 0 ? new ArrayList<>() : allLines.subList(data + 1, allLines.size()));
     }
 
     private int carregarInstrucoes(List<String> allLines, int data) {

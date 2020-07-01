@@ -21,7 +21,7 @@ public class Ula {
             return dado1 | dado2;
         }
         if (func.equals("100")) {// lui
-            final String binaryString = Long.toBinaryString(dado2);
+            final String binaryString = Long.toBinaryString(dado2); //LUI sempre 140 a frente do valor do MARS
             String loadedBin = binaryString.concat("0000000010001100"); // Valor do LUI para simulador: 1000000 = 64
             if (loadedBin.startsWith("1000000000001")) {
                 loadedBin = loadedBin.replace("1000000000001", "0000000001000000");
