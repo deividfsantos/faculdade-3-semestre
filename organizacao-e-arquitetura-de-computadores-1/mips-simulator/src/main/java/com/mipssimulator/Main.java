@@ -40,22 +40,22 @@ public class Main {
             BlocoControle blocoControle = new BlocoControle();
             //Etapa 1
 
-            final Integer enderecoPC = muxPC(0, pc, blocoControle);
-            final Integer valorMemoriaPC = memoria.executar(enderecoPC, 0, blocoControle);
+            final Integer enderecoPC = muxPC(0, pc, blocoControle);// Saida do mux do pc que eh o proprio endereco de pc
+            final Integer valorMemoriaPC = memoria.executar(enderecoPC, 0, blocoControle);// leitura e escrita na memoria
 
             Integer muxPCA = muxA(blocoControle, 0, pc);// Guarda endereco de Pc que eh passado pelo mux para avancar Pc
             Integer muxPCB = muxB(blocoControle, 0, "");// Guarda o valor 4 para a ula somar com o endereco de Pc
 
-            final String ulaOP = ula.operacaoUla("", "", blocoControle);// q faz isso?
+            final String ulaOP = ula.operacaoUla("", "", blocoControle);// Define operacao da ula
             pc = ula.calcular(muxPCA, muxPCB, ulaOP);// faz pc +=4 para avancar no programa
 
             //Etapa 2
             String instructionBin = Long.toBinaryString(Integer.toUnsignedLong(valorMemoriaPC) | 0x100000000L).substring(1);
             //divisão de partes do opcode
             String opCode = instructionBin.substring(0, 6);// opcode da instrucao
-            String reg1 = instructionBin.substring(6, 11);// rd
+            String reg1 = instructionBin.substring(6, 11);// rs
             String reg2 = instructionBin.substring(11, 16);// rt
-            String reg3 = instructionBin.substring(16, 21);// rs
+            String reg3 = instructionBin.substring(16, 21);// rd
             String func = instructionBin.substring(16, 32);// ultimos 16 bits (imediato/func)
 
             blocoControle.defineOpcode(opCode);// define os sinais do bloco de controle
@@ -63,23 +63,23 @@ public class Main {
             final Integer A = registradores.busca(reg1);// bloco A
             final Integer B = registradores.busca(reg2);// bloco B
 
-            String valorEstendido = extensaoSinal(func);// extende o valor
+            String valorEstendido = extensaoSinal(func);// estende o valor
 
             //Etapa 2-3
             Integer muxA = muxA(blocoControle, A, pc);// Guarda a saida do multiplexador entre A e a ula
             Integer muxB = muxB(blocoControle, B, valorEstendido);// Guarda a saida do multiplexador entre B e a ula
 
-            final String opUla = ula.operacaoUla(func.substring(10, 16), opCode, blocoControle);
+            final String opUla = ula.operacaoUla(func.substring(10, 16), opCode, blocoControle);// define o que a ula fara
             final Integer resultadoUla = ula.calcular(muxA, muxB, opUla);// guarda a saida da operacao da ula
 
             //Etapa 3
             final String regEscrita = muxRegistradorEscrito(blocoControle, reg2, reg3);// registrador que sera escrito
             registradores.escreve(resultadoUla, regEscrita, blocoControle);// escreve sobre regEscrita
 
-            defineOpCodeEtapa3(blocoControle, opCode);
+            defineOpCodeEtapa3(blocoControle, opCode);// atualiza controle
 
-            final Integer endereco = muxPC(resultadoUla, pc, blocoControle);
-            final Integer registradorDadosMemoria = memoria.executar(endereco, B, blocoControle);
+            final Integer endereco = muxPC(resultadoUla, pc, blocoControle);// guarda a saida da ula ou o pc dependendo do controle
+            final Integer registradorDadosMemoria = memoria.executar(endereco, B, blocoControle);// ler e escrever endereco na memoria
 
             final Integer dadoEscrita = muxDadoEscrito(blocoControle, registradorDadosMemoria, resultadoUla);// Guarda a saida do mux entre a bloco de dados da memoria e o bloco de registradores
 
@@ -88,7 +88,7 @@ public class Main {
         }
     }
 
-    private static void defineOpCodeEtapa3(BlocoControle blocoControle, String opCode) {
+    private static void defineOpCodeEtapa3(BlocoControle blocoControle, String opCode) {// atualiza sinais do controle para a etapa3
         final String tipoAddiuOpCode = "001001";
         final String tipoAndiOpCode = "001100";
         final String tipoLuiOpCode = "001111";
@@ -109,7 +109,7 @@ public class Main {
     }
 
     //implementação do multiplexador que da entrada no bloco de registradores como "Reg a ser escrito"
-    //retorna reg0(n sei oq é) se RegDst estiver ligado e reg1(n sei tb) caso contrário
+    //retorna reg0 se RegDst estiver ligado e reg1(n sei tb) caso contrário
     private static String muxRegistradorEscrito(BlocoControle blocoControle, String reg0, String reg1) {
         if (blocoControle.getRegDst().equals("1")) {
             return reg0;

@@ -135,7 +135,7 @@ public class BlocoControle {
         this.regDst = regDst;
     }
 
-    public void defineOpcode(String opCode) {
+    public void defineOpcode(String opCode) {// define todas as entradas do controle
         setUlaFonteB("00");
         setUlaFonteA("1");
         final String tipoROpCode = "000000"; // opcode dos tipos R

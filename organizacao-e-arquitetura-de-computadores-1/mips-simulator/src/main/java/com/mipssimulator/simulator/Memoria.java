@@ -27,7 +27,7 @@ public class Memoria {
     }
 
 
-    public Integer executar(Integer endereco, Integer dadosEscrito, BlocoControle blocoControle) {
+    public Integer executar(Integer endereco, Integer dadosEscrito, BlocoControle blocoControle) {// pega e escreve na memoria
         escreve(endereco, dadosEscrito, blocoControle);
         final Integer ler = ler(endereco, blocoControle);
         printMemoria();
